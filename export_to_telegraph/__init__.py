@@ -146,7 +146,11 @@ def export(url):
 	try:
 		p = _getPoster()
 		article = _getArticle(_formaturl(url))
-		r = p.post(title = _Article.title, author = _Article.author, author_url = url, text = str(article.text)[:80000])
+		r = p.post(
+			title = article.title, 
+			author = article.author, 
+			author_url = _formaturl(url), 
+			text = str(article.text)[:80000])
 		return _trimUrl(r['url'])
 	except Exception as e:
 		print(e)
