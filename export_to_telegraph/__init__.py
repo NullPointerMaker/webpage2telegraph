@@ -25,7 +25,7 @@ def _getPoster():
 	return p
 
 def _wechat2Article(soup):
-	title = _soup.find("h2").text.strip()
+	title = soup.find("h2").text.strip()
 	author = soup.find("a", {"id" : "js_name"}).text.strip()
 	g = soup.find("div", {"id" : "js_content"})
 	for img in g.find_all("img"):

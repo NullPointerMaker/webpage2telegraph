@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="export_to_telegraph",
-    version="0.0.4",
+    version="0.0.6",
     author="Yunzhi Gao",
     author_email="gaoyunzhi@gmail.com",
     description="Library for export webpage to Telegraph.",
@@ -22,5 +22,5 @@ setuptools.setup(
         'html_telegraph_poster',
         'bs4'
     ],
-    python_requires='>=3.6',
+    python_requires='>=3.0',
 )
