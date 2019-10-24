@@ -20,7 +20,7 @@ def _getPoster():
 	if token:
 		return TelegraphPoster(access_token = token)
 	p = TelegraphPoster()
-	r = p.create_api_token(msg.from_user.first_name, msg.from_user.username)
+	r = p.create_api_token('export_to_telegraph', 'export_to_telegraph')
 	token = r['access_token']
 	return p
 
@@ -72,6 +72,7 @@ def _bbc2Article(soup):
 
 _NYT_ADS = '《纽约时报》推出每日中文简报'
 _ADS_SUFFIX = '订阅《纽约时报》中文简报'
+ADS_WORDS = set(['The Times is committed', 'Follow The New York Times'])
 
 def _nyt2Article(soup):
 	title = soup.find("meta", {"property": "twitter:title"})['content'].strip()
@@ -84,6 +85,14 @@ def _nyt2Article(soup):
 		item.decompose()
 	for item in g.find_all("small"):
 		item.decompose()
+	for item in g.find_all("header"):
+		item.decompose()
+	for item in g.find_all("div", {"id":"top-wrapper"}):
+		item.decompose()
+	for item in g.find_all("div", class_="bottom-of-article"):
+		item.decompose()
+	for item in g.find_all("div", {"id":"bottom-wrapper"}):
+		item.decompose()
 	for item in g.find_all("div", class_="article-paragraph"):
 		if item.text and (_NYT_ADS in item.text or _ADS_SUFFIX in item.text):
 			item.decompose()
@@ -93,6 +102,11 @@ def _nyt2Article(soup):
 			wrapper = soup.new_tag("p")
 			wrapper.append(BeautifulSoup(str(item), features="lxml"))
 			item.replace_with(wrapper)
+	for item in g.find_all("p"):
+		for word in ADS_WORDS:
+			if word in item.text:
+				item.decompose()
+				continue
 	for item in g.find_all("footer", class_="author-info"):
 		for subitem in item.find_all("a"):
 			if subitem.text and "英文版" in subitem.text:
@@ -155,3 +169,15 @@ def export(url):
 	except Exception as e:
 		print(e)
 		tb.print_exc()
+
+def _test():
+	url = 'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html'
+	article = _getArticle(_formaturl(url))
+	with open('tmp.html','w') as f:
+		f.write(str(article.text))
+	return export(url)
+
+_test()
+
+
+
