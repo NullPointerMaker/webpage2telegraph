@@ -156,7 +156,7 @@ def _formaturl(url):
 		return "https://" + url
 	return url
 
-def export(url):
+def export(url, throw_exception=False):
 	try:
 		p = _getPoster()
 		article = _getArticle(_formaturl(url))
@@ -167,8 +167,8 @@ def export(url):
 			text = str(article.text)[:80000])
 		return _trimUrl(r['url'])
 	except Exception as e:
-		print(e)
-		tb.print_exc()
+		if throw_exception:
+			raise e
 
 def _test():
 	url = 'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html'
