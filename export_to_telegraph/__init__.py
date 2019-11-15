@@ -170,6 +170,20 @@ def export(url, throw_exception=False):
 		if throw_exception:
 			raise e
 
+def getArticle(url, throw_exception=False):
+	try:
+		p = _getPoster()
+		article = _getArticle(_formaturl(url))
+		r = p.post(
+			title = article.title, 
+			author = article.author, 
+			author_url = _formaturl(url), 
+			text = str(article.text)[:80000])
+		return _trimUrl(r['url'])
+	except Exception as e:
+		if throw_exception:
+			raise e
+
 def _test():
 	url = 'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html'
 	article = _getArticle(_formaturl(url))
