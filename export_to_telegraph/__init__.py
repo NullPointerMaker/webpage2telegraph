@@ -143,16 +143,16 @@ def _getArticleFromSoup(soup, url):
 		return _telegraph2Article(soup)
 	if "nyt" in url:
 		return _nyt2Article(soup)
-	return _telegraph2Article(soup)
+	return _Article(None, None, None)
 
-def _findRawTitle(item, url):
-	if 'content' in item:
+def _findRawTitle(item):
+	if item.has_attr('content'):
 		title = item['content'].strip()
 		if title:
 			return title
-	return title.text.strip()
+	return item.text.strip()
 
-def _cleanupRawTitle(raw, url):
+def _cleanupRawTitle(raw):
 	index = raw.rfind('- ')
 	if index != -1:
 		raw = raw[:index]
@@ -161,22 +161,22 @@ def _cleanupRawTitle(raw, url):
 	sorted_t = sorted([(len(title.strip()), title.strip()) for title in titles])
 	return sorted_t[-1][1]
 
-def _yieldPossibleTitleItem(soup, url):
+def _yieldPossibleTitleItem(soup):
 	yield soup.find("meta", {"property": "twitter:title"})
 	yield soup.find("meta", {"name": "twitter:title"})
 	yield soup.find("title")
 	yield soup.find("h1")
 	yield soup.find("h2")
 
-def _findTitleFromItem(item, url):
-	raw = _findRawTitle(item, url)
+def _findTitleFromItem(item):
+	raw = _findRawTitle(item)
 	return _cleanupRawTitle(raw) 
 
-def _findTitle(soup, doc, url):
-	for item in _yieldPossibleTitleItem(soup, url):
+def _findTitle(soup, doc):
+	for item in _yieldPossibleTitleItem(soup):
 		if not item:
 			continue
-		result = _findTitleFromItem(item, url)
+		result = _findTitleFromItem(item)
 		if len(result) < 200:
 			return result
 	print('DEBUG WARNING, SHOULD NOT BE HERE')
@@ -187,10 +187,11 @@ def _getArticle(url):
 	soup = BeautifulSoup(r.text, 'html.parser')
 	doc = Document(r.text)
 	article = _getArticleFromSoup(soup, url)
-	article.title = _findTitle(soup, doc, url)
+	print(_findTitle(soup, doc))
+	# article.title = _findTitle(soup, doc, url)
 
-	if not article.text:
-		article.text = doc.content()
+	# if not article.text:
+	# 	article.text = doc.content()
 	return article
 
 def _trimUrl(url):
@@ -277,13 +278,21 @@ urls = [
 	'https://www.nytimes.com/2019/11/14/opinion/teen-girls-jailed.html?smid=fb-nytimes&smtyp=cur&fbclid=IwAR20qM1vb1lD0NGUYQNDXnp657ImPUdRovc0H-dV--RQENiQu5f1OW4Ko6o',
 	'telegra.ph/香港抗议僵局难解亲北京阵营陷入分歧-10-18',
 	'www.bbc.com/zhongwen/simp/world-49968707?ocid=socialflow_twitter',
-	'香港发生示威五个月以来第三起警察实弹枪伤抗议者事件，警方指示威者当时尝试抢夺警员的佩枪，另有市民被示威者纵火严重烧伤 。https://t.co/4ik2VsUHeB',
+	'https://t.co/4ik2VsUHeB',
 ]
 
+urls = [
+	'https://www.bbc.com/zhongwen/simp/world-50034631?ocid=socialflow_twitter',
+	'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
+	'https://onezero.medium.com/how-morality-can-help-us-disconnect-68b2b695f7e6',
+]
 def _test():
-	for url in random.shuffle(urls):
-		r = export(url)
-		print(r)
+	random.shuffle(urls)
+	for url in urls:
+		r = export(url, False)
+		print(r, url)
+		if not r:
+			export(url, True)
 
 _test()
 
