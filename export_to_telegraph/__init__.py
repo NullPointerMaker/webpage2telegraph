@@ -128,10 +128,6 @@ def _tagReplace(soup):
 		b = factory.new_tag("figure", width=img['data-width'], height=img['data-height'])
 		b.append(factory.new_tag("img", src = img['data-src'], width=img['data-width'], height=img['data-height']))
 		img.replace_with(b)
-	for section in soup.find_all("section"):
-		b = factory.new_tag("p")
-		b.append(BeautifulSoup(str(section), features="lxml"))
-		section.replace_with(b)
 	for item in soup.find_all("div", class_="article-paragraph"):
 		if matchKey(item.text, DIV_AD_WORDS):
 			item.decompose()
@@ -139,16 +135,19 @@ def _tagReplace(soup):
 		wrapper = factory.new_tag("p")
 		wrapper.append(BeautifulSoup(str(item), features="lxml"))
 		item.replace_with(wrapper)
+	for item in soup.find_all("p"):
+		if matchKey(item.text, P_AD_WORDS) or item.text in ['广告']:
+			item.decompose()
+	for section in soup.find_all("section"):
+		b = factory.new_tag("p")
+		b.append(BeautifulSoup(str(section), features="lxml"))
+		section.replace_with(b)
 	return soup
 
 def _removeAds(soup):
 	lists = [
 		soup.find_all("p"),
 	]
-	for l in lists:
-		for item in l:
-			if matchKey(item.text, P_AD_WORDS) or item.text in ['广告']:
-				item.decompose()
 	for item in soup.find_all("footer", class_="author-info"):
 		for subitem in item.find_all("a"):
 			if subitem.text and "英文版" in subitem.text:
@@ -314,7 +313,7 @@ urls = [
 def _test():
 	random.shuffle(urls)
 	random.shuffle(urls)
-	for url in urls:
+	for url in ['https://www.nytimes.com/2019/11/14/opinion/teen-girls-jailed.html?smid=fb-nytimes&smtyp=cur&fbclid=IwAR20qM1vb1lD0NGUYQNDXnp657ImPUdRovc0H-dV--RQENiQu5f1OW4Ko6o']:
 		r = export(url, True)
 		print('\t', r, url)
 
