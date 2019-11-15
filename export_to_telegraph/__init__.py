@@ -153,28 +153,42 @@ def _findRawTitle(item, url):
 	return title.text.strip()
 
 def _cleanupRawTitle(raw, url):
-	raw = raw.replace('- Stack Overflow', '')
+	index = raw.rfind('- ')
+	if index != -1:
+		raw = raw[:index]
 	raw = raw.strip()
 	titles = raw.split('|')
 	sorted_t = sorted([(len(title.strip()), title.strip()) for title in titles])
 	return sorted_t[-1][1]
 
-def _findTitleItem(soup, url):
-	return
+def _yieldPossibleTitleItem(soup, url):
+	yield soup.find("meta", {"property": "twitter:title"})
+	yield soup.find("meta", {"name": "twitter:title"})
+	yield soup.find("title")
+	yield soup.find("h1")
+	yield soup.find("h2")
 
-def _findTitle(soup, url):
-	item = _findTitleItem(soup, url)
+def _findTitleFromItem(item, url):
 	raw = _findRawTitle(item, url)
 	return _cleanupRawTitle(raw) 
+
+def _findTitle(soup, doc, url):
+	for item in _yieldPossibleTitleItem(soup, url):
+		if not item:
+			continue
+		result = _findTitleFromItem(item, url)
+		if len(result) < 200:
+			return result
+	print('DEBUG WARNING, SHOULD NOT BE HERE')
+	return _cleanupRawTitle(doc.title())
 
 def _getArticle(url):
 	r = requests.get(url)
 	soup = BeautifulSoup(r.text, 'html.parser')
 	doc = Document(r.text)
 	article = _getArticleFromSoup(soup, url)
-	# Last line of defense
-	if not article.title:
-		article.title = doc.title()
+	article.title = _findTitle(soup, doc, url)
+
 	if not article.text:
 		article.text = doc.content()
 	return article
