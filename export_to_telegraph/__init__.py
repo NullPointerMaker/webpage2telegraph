@@ -116,6 +116,10 @@ def _decomposeOfftopic(soup):
 		for elm in r:	
 			elm.decompose()
 
+	for item in soup.find_all('div'):
+		if 'social' in str(item['class']):
+			item.decompose()
+
 	for item in soup.find_all("header"):
 		wrapper = factory.new_tag("p")
 		s = item.find("p", {"id": "article-summary"})
