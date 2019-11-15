@@ -184,16 +184,16 @@ def _removeAds(soup):
 
 def _findTextFromSoup(soup):
 	soup = _getInnerArticle(soup)
-	with open('/Users/yunzhi/Desktop/a.html', 'w') as f:
+	with open('tmp_a.html', 'w') as f:
 		f.write(str(soup))
 	soup = _decomposeOfftopic(soup)
-	with open('/Users/yunzhi/Desktop/b.html', 'w') as f:
+	with open('tmp_b.html', 'w') as f:
 		f.write(str(soup))
 	soup = _replaceOfftopicLink(soup)
-	with open('/Users/yunzhi/Desktop/c.html', 'w') as f:
+	with open('tmp_c.html', 'w') as f:
 		f.write(str(soup))
 	soup = _tagReplace(soup)
-	with open('/Users/yunzhi/Desktop/d.html', 'w') as f:
+	with open('tmp_d.html', 'w') as f:
 		f.write(str(soup))
 	soup = _removeAds(soup)
 	return soup
