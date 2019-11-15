@@ -14,6 +14,8 @@ from telegram_util import matchKey
 
 factory = BeautifulSoup("<div></div>", features="lxml")
 
+OFFTOPIC_CLASSES = ['social', 'side', 'ads', 'comment', 'latest', 'widget']
+
 class _Article(object):
 	def __init__(self, title, author, text):
 		self.title = title
@@ -111,13 +113,15 @@ def _decomposeOfftopic(soup):
 		soup.find_all('div', class_="linkList"),
 		soup.find_all('div', {"style": "display:none;"}),
 		soup.find_all('div', class_="accordion"),
+		soup.find_all('noscript')
 	]
 	for r in lists:
 		for elm in r:	
 			elm.decompose()
 
 	for item in soup.find_all('div'):
-		if 'social' in str(item['class']):
+		if item.attrs and item.has_attr('class') and \
+			matchKey(str(item['class']), OFFTOPIC_CLASSES):
 			item.decompose()
 
 	for item in soup.find_all("header"):
@@ -143,18 +147,20 @@ def _replaceOfftopicLink(soup):
 def _tagReplace(soup):
 	for img in soup.find_all("img"):
 		if img.has_attr('data-src'):
-			b = factory.new_tag("figure")
-			b.append(factory.new_tag("img", src = img['data-src']))
-			img.append(b)
+			img['src'] = img['data-src']
+		if img.parent.name == 'figure':
 			continue
-		if img.has_attr('src') and img['src'].startswith('/image'):
-			b = factory.new_tag("figure")
-			b.append(factory.new_tag("img", src = 'https://www.dw.com' + img['src']))
-			c = factory.new_tag("figcaption")
-			if img.has_attr('title'):
-				c.append(img['title'])
-			b.append(c)
-			img.replace_with(b)
+		if not img.has_attr('src'):
+			continue
+		figure = factory.new_tag("figure")
+		if img['src'].startswith('/image'):
+			img['src'] = 'https://www.dw.com' + img['src']
+		figure.append(factory.new_tag("img", src = img['src']))
+		caption = factory.new_tag("figcaption")
+		if img.has_attr('title'):
+			caption.append(img['title'])
+		figure.append(caption)
+		img.replace_with(figure)
 	for img in soup.find_all("div", class_="js-delayed-image-load"):
 		b = factory.new_tag("figure", width=img['data-width'], height=img['data-height'])
 		b.append(factory.new_tag("img", src = img['data-src'], width=img['data-width'], height=img['data-height']))
@@ -173,6 +179,16 @@ def _tagReplace(soup):
 		b = factory.new_tag("p")
 		b.append(BeautifulSoup(str(section), features="lxml"))
 		section.replace_with(b)
+	to_remove_tags = [
+		soup.find_all("li"),
+		soup.find_all("ul")
+	]
+	for l in to_remove_tags:
+		for item in l:
+			new_item = factory.new_tag("p")
+			for x in item.find_all(recursive=False):
+				new_item.append(x)
+			item.replace_with(new_item)
 	return soup
 
 def _removeAds(soup):
@@ -303,16 +319,17 @@ def export(url, throw_exception=False):
 			raise e
 
 urls = [
-	# 'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
-	# 'bbc.in/2W2Gohc',
-	# 'https://t.co/Joty1jyQwt',
-	# 'https://t.co/k2kLBpdQhl',
-	# 'https://t.co/4ik2VsUHeB',
-	# 'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
+	'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
+	'bbc.in/2W2Gohc',
+	'https://t.co/Joty1jyQwt',
+	'https://t.co/k2kLBpdQhl',
+	'https://t.co/4ik2VsUHeB',
+	'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
+	'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
 ]
 
 def _test():
-	for url in urls[:1]:
+	for url in urls:
 		r = export(url, True)
 		print('\t', r, url)
 
