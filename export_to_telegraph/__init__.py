@@ -14,7 +14,7 @@ from telegram_util import matchKey
 
 factory = BeautifulSoup("<div></div>", features="lxml")
 
-OFFTOPIC_CLASSES = ['social', 'side', 'ads', 'comment', 'latest', 'widget']
+OFFTOPIC_CLASSES = ['social', 'side', 'ads', 'comment', 'latest', 'widget', 'more']
 
 class _Article(object):
 	def __init__(self, title, author, text):
@@ -319,13 +319,13 @@ def export(url, throw_exception=False):
 			raise e
 
 urls = [
-	'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
-	'bbc.in/2W2Gohc',
-	'https://t.co/Joty1jyQwt',
-	'https://t.co/k2kLBpdQhl',
-	'https://t.co/4ik2VsUHeB',
-	'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
-	'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
+	# 'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
+	# 'bbc.in/2W2Gohc',
+	# 'https://t.co/Joty1jyQwt',
+	# 'https://t.co/k2kLBpdQhl',
+	# 'https://t.co/4ik2VsUHeB',
+	# 'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
+	# 'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
 ]
 
 def _test():
