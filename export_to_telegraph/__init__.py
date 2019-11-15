@@ -10,6 +10,7 @@ from html_telegraph_poster import TelegraphPoster
 import traceback as tb
 from readability import Document
 import random
+from telegram_util import matchKey
 
 class _Article(object):
 	def __init__(self, title, author, text):
@@ -30,86 +31,86 @@ def _wechat2Article(soup):
 	title = soup.find("h2").text.strip()
 	author = soup.find("a", {"id" : "js_name"}).text.strip()
 	g = soup.find("div", {"id" : "js_content"})
-	for img in g.find_all("img"):
-		b = soup.new_tag("figure")
-		b.append(soup.new_tag("img", src = img["data-src"]))
-		img.append(b)
-	for section in g.find_all("section"):
-		b = soup.new_tag("p")
-		b.append(BeautifulSoup(str(section), features="lxml"))
-		section.replace_with(b)
+	# for img in soup.find_all("img"):
+	# 	b = soup.new_tag("figure")
+	# 	b.append(soup.new_tag("img", src = img["data-src"]))
+	# 	img.append(b)
+	# for section in soup.find_all("section"):
+	# 	b = soup.new_tag("p")
+	# 	b.append(BeautifulSoup(str(section), features="lxml"))
+	# 	section.replace_with(b)
 	return _Article(title, author, g)
-	
 
 def _stackoverflow2Article(soup):
 	title = soup.find("title").text.strip()
 	title = title.replace('- Stack Overflow', '').strip()
-	g = soup.find("div", class_ = "answercell")
-	g = g.find("div", class_ = "post-text")
-	for section in g.find_all("section"):
-		b = soup.new_tag("p")
-		b.append(BeautifulSoup(str(section), features="lxml"))
-		section.replace_with(b)
+	# g = soup.find("div", class_ = "answercell")
+	# g = soup.find("div", class_ = "post-text")
+	# for section in soup.find_all("section"):
+	# 	b = soup.new_tag("p")
+	# 	b.append(BeautifulSoup(str(section), features="lxml"))
+	# 	section.replace_with(b)
 	
 	return _Article(title, 'Stack Overflow', g)
 
 def _bbc2Article(soup):
 	title = soup.find("h1").text.strip()
 	g = soup.find("div", class_ = "story-body__inner")
-	for elm in g.find_all('span', class_="off-screen"):
-		elm.decompose()
-	for elm in g.find_all('ul', class_="story-body__unordered-list"):
-		elm.decompose()
-	for elm in g.find_all('span', class_="story-image-copyright"):
-		elm.decompose()
-	for img in g.find_all("div", class_="js-delayed-image-load"):
-		b = soup.new_tag("figure", width=img['data-width'], height=img['data-height'])
-		b.append(soup.new_tag("img", src = img["data-src"], width=img['data-width'], height=img['data-height']))
-		img.replace_with(b)
-	for section in g.find_all("section"):
-		b = soup.new_tag("p")
-		b.append(BeautifulSoup(str(section), features="lxml"))
-		section.replace_with(b)
+	# for elm in soup.find_all('span', class_="off-screen"):
+	# 	elm.decompose()
+	# for elm in soup.find_all('ul', class_="story-body__unordered-list"):
+	# 	elm.decompose()
+	# for elm in soup.find_all('span', class_="story-image-copyright"):
+	# 	elm.decompose()
+	# for img in soup.find_all("div", class_="js-delayed-image-load"):
+	# 	b = soup.new_tag("figure", width=img['data-width'], height=img['data-height'])
+	# 	b.append(soup.new_tag("img", src = img["data-src"], width=img['data-width'], height=img['data-height']))
+	# 	img.replace_with(b)
+	# for section in soup.find_all("section"):
+	# 	b = soup.new_tag("p")
+	# 	b.append(BeautifulSoup(str(section), features="lxml"))
+	# 	section.replace_with(b)
 	return _Article(title, 'BBC', g)
 
-_NYT_ADS = '《纽约时报》推出每日中文简报'
-_ADS_SUFFIX = '订阅《纽约时报》中文简报'
-ADS_WORDS = set(['The Times is committed', 'Follow The New York Times'])
+ADS_WORDS = [
+	'The Times is committed', 
+	'Follow The New York Times',
+	'《纽约时报》推出每日中文简报',
+	'订阅《纽约时报》中文简报',
+]
 
 def _nyt2Article(soup):
 	title = soup.find("meta", {"property": "twitter:title"})['content'].strip()
 	author = soup.find("meta", {"name": "byl"})['content'].strip()
 	g = soup.find("article")
-	for link in g.find_all("a"):
-		if not '英文版' in link.text:
-			link.replace_with(link.text)
-	for item in g.find_all("div", class_="article-header"):
-		item.decompose()
-	for item in g.find_all("small"):
-		item.decompose()
-	for item in g.find_all("header"):
-		item.decompose()
-	for item in g.find_all("div", {"id":"top-wrapper"}):
-		item.decompose()
-	for item in g.find_all("div", class_="bottom-of-article"):
-		item.decompose()
-	for item in g.find_all("div", {"id":"bottom-wrapper"}):
-		item.decompose()
-	for item in g.find_all("div", class_="article-paragraph"):
-		if item.text and (_NYT_ADS in item.text or _ADS_SUFFIX in item.text):
-			item.decompose()
-		elif item.text == '广告':
-			item.decompose()
-		else:
-			wrapper = soup.new_tag("p")
-			wrapper.append(BeautifulSoup(str(item), features="lxml"))
-			item.replace_with(wrapper)
-	for item in g.find_all("p"):
-		for word in ADS_WORDS:
-			if word in item.text:
-				item.decompose()
-				continue
-	for item in g.find_all("footer", class_="author-info"):
+	# for link in soup.find_all("a"):
+	# 	if not '英文版' in link.text:
+	# 		link.replace_with(link.text)
+	# for item in soup.find_all("div", class_="article-header"):
+	# 	item.decompose()
+	# for item in soup.find_all("small"):
+	# 	item.decompose()
+	# for item in soup.find_all("header"):
+	# 	item.decompose()
+	# for item in soup.find_all("div", {"id":"top-wrapper"}):
+	# 	item.decompose()
+	# for item in soup.find_all("div", class_="bottom-of-article"):
+	# 	item.decompose()
+	# for item in soup.find_all("div", {"id":"bottom-wrapper"}):
+	# 	item.decompose()
+	# for item in soup.find_all("div", class_="article-paragraph"):
+	# 	if matchKey(item.text, ADS_WORDS):
+	# 		item.decompose()
+	# 	elif item.text in ['广告']:
+	# 		item.decompose()
+	# 	else:
+	# 		wrapper = soup.new_tag("p")
+	# 		wrapper.append(BeautifulSoup(str(item), features="lxml"))
+	# 		item.replace_with(wrapper)
+	# for item in soup.find_all("p"):
+	# 	if matchKey(item.text, ADS_WORDS):
+	# 		item.decompose()
+	for item in soup.find_all("footer", class_="author-info"):
 		for subitem in item.find_all("a"):
 			if subitem.text and "英文版" in subitem.text:
 				item.replace_with(subitem)
@@ -120,12 +121,12 @@ def _telegraph2Article(soup):
 	title = soup.find("meta", {"name": "twitter:title"})['content'].strip()
 	author = soup.find("meta", {"property": "article:author"})['content'].strip()
 	g = soup.find("article")
-	item = g.find('h1')
-	if item:
-		item.decompose()
-	item = g.find('address')
-	if item:
-		item.decompose()
+	# item = soup.find('h1')
+	# if item:
+	# 	item.decompose()
+	# item = soup.find('address')
+	# if item:
+	# 	item.decompose()
 	return _Article(title, author, g)
 
 def _getArticleFromSoup(soup, url):
@@ -145,6 +146,93 @@ def _getArticleFromSoup(soup, url):
 		return _nyt2Article(soup)
 	return _Article(None, None, None)
 
+def _getInnerArticle(soup):
+	soup = soup.find("article") or soup
+	soup = soup.find("div", {"id" : "js_content"}) or soup
+	soup = soup.find("div", class_ = "story-body__inner") or soup
+	soup = soup.find("div", class_ = "answercell") or soup
+	soup = soup.find("div", class_ = "post-text") or soup
+	return soup
+
+def _decomposeOfftopic(soup):
+	# TODO: head photo or opionion article missing?
+	lists = [
+		soup.find_all('span', class_="off-screen"),
+		soup.find_all('ul', class_="story-body__unordered-list"),
+		soup.find_all('span', class_="story-image-copyright"),
+		soup.find_all("div", class_="article-header"),
+		soup.find_all("small"),
+		soup.find_all("header"),
+		soup.find_all("div", {"id":"top-wrapper"}),
+		soup.find_all("div", class_="bottom-of-article"),
+		soup.find_all("div", {"id":"bottom-wrapper"}),
+		soup.find_all('h1'),
+		soup.find_all('address'),
+	]
+	for r in lists:
+		for elm in r:	
+			elm.decompose()
+	return soup
+
+def _replaceOfftopicLink(soup):
+	for link in soup.find_all("a"):
+		if not matchKey(link.text, ['英文版']):
+			link.replace_with(link.text)
+	return soup
+
+def _tagReplace(soup):
+	for img in soup.find_all("img"):
+		b = soup.new_tag("figure")
+		b.append(soup.new_tag("img", src = img["data-src"]))
+		img.append(b)
+	for img in soup.find_all("div", class_="js-delayed-image-load"):
+		b = soup.new_tag("figure", width=img['data-width'], height=img['data-height'])
+		b.append(soup.new_tag("img", src = img["data-src"], width=img['data-width'], height=img['data-height']))
+		img.replace_with(b)
+	for section in soup.find_all("section"):
+		b = soup.new_tag("p")
+		b.append(BeautifulSoup(str(section), features="lxml"))
+		section.replace_with(b)
+	for item in soup.find_all("div", class_="article-paragraph"):
+		wrapper = soup.new_tag("p")
+		wrapper.append(BeautifulSoup(str(item), features="lxml"))
+		item.replace_with(wrapper)
+	return soup
+
+def _removeAds(soup):
+	lists = [
+		soup.find_all("p"),
+		soup.find_all("div")
+	]
+	for l in lists:
+		for item in l:
+			if matchKey(item.text, ADS_WORDS) or item.text in ['广告']:
+				item.decompose()
+	for item in soup.find_all("footer", class_="author-info"):
+		for subitem in item.find_all("a"):
+			if subitem.text and "英文版" in subitem.text:
+				item.replace_with(subitem)
+				break
+	return soup
+
+def _findTextFromSoup(soup):
+	soup = _getInnerArticle(soup)
+	soup = _decomposeOfftopic(soup)
+	soup = _replaceOfftopicLink(soup)
+	soup = _tagReplace(soup)
+	soup = _removeAds(soup)
+	return soup
+
+def _findText(soup, doc):
+	result = _findTextFromSoup(soup)
+	if result:
+		return result
+	result = _findTextFromSoup(BeautifulSoup(doc.content))
+	if result:
+		return result
+	return doc.content()
+
+
 def _findRawTitle(item):
 	if item.has_attr('content'):
 		title = item['content'].strip()
@@ -152,14 +240,21 @@ def _findRawTitle(item):
 			return title
 	return item.text.strip()
 
+def _similarSingle(p, mediaName):
+	return mediaName.lower() in p.lower() and (len(p) - len(mediaName)) < 10
+
+def _similar(p, mediaNames):
+	return any([_similarSingle(p, m) for m in mediaNames])
+
 def _cleanupRawTitle(raw):
+	mediaNames = ['nyt', 'new york times', 'stackoverflow', 'bbc', 'opinion']
 	index = raw.rfind('- ')
 	if index != -1:
 		raw = raw[:index]
 	raw = raw.strip()
-	titles = raw.split('|')
-	sorted_t = sorted([(len(title.strip()), title.strip()) for title in titles])
-	return sorted_t[-1][1]
+	parts = raw.split('|')
+	parts = [p for p in parts if not _similar(p, mediaNames)]
+	return ('|'.join(parts)).strip()
 
 def _yieldPossibleTitleItem(soup):
 	yield soup.find("meta", {"property": "twitter:title"})
@@ -187,8 +282,9 @@ def _getArticle(url):
 	soup = BeautifulSoup(r.text, 'html.parser')
 	doc = Document(r.text)
 	article = _getArticleFromSoup(soup, url)
-	print(_findTitle(soup, doc))
-	# article.title = _findTitle(soup, doc, url)
+	article.title = _findTitle(soup, doc)
+	_findText(soup, doc)
+	# article.text = _findText(soup, doc)
 
 	# if not article.text:
 	# 	article.text = doc.content()
@@ -281,18 +377,17 @@ urls = [
 	'https://t.co/4ik2VsUHeB',
 ]
 
-urls = [
-	'https://www.bbc.com/zhongwen/simp/world-50034631?ocid=socialflow_twitter',
-	'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
-	'https://onezero.medium.com/how-morality-can-help-us-disconnect-68b2b695f7e6',
-]
 def _test():
 	random.shuffle(urls)
 	for url in urls:
-		r = export(url, False)
-		print(r, url)
-		if not r:
-			export(url, True)
+		r = None
+		try:
+			r = export(url, False)
+		except Exception as e:
+			print(e)
+			tb.print_exc()
+		print('\t', r, url)
+
 
 _test()
 
