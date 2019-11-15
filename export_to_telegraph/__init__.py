@@ -27,50 +27,49 @@ def _getPoster():
 	token = r['access_token']
 	return p
 
-def _wechat2Article(soup):
-	title = soup.find("h2").text.strip()
-	author = soup.find("a", {"id" : "js_name"}).text.strip()
-	g = soup.find("div", {"id" : "js_content"})
-	# for img in soup.find_all("img"):
-	# 	b = soup.new_tag("figure")
-	# 	b.append(soup.new_tag("img", src = img["data-src"]))
-	# 	img.append(b)
-	# for section in soup.find_all("section"):
-	# 	b = soup.new_tag("p")
-	# 	b.append(BeautifulSoup(str(section), features="lxml"))
-	# 	section.replace_with(b)
-	return _Article(title, author, g)
+def _yieldPossibleAuthorItem(soup):
+	yield soup.find("a", {"id" : "js_name"})
+	yield soup.find("meta", {"property": "article:author"})
+	yield soup.find("meta", {"name": "byl"})
 
-def _stackoverflow2Article(soup):
-	title = soup.find("title").text.strip()
-	title = title.replace('- Stack Overflow', '').strip()
-	# g = soup.find("div", class_ = "answercell")
-	# g = soup.find("div", class_ = "post-text")
-	# for section in soup.find_all("section"):
-	# 	b = soup.new_tag("p")
-	# 	b.append(BeautifulSoup(str(section), features="lxml"))
-	# 	section.replace_with(b)
-	
-	return _Article(title, 'Stack Overflow', g)
+def _yieldPossibleOrgItem(soup):
+	yield soup.find("meta", {"property": "twitter:site"})
+	yield soup.find("meta", {"property": "twitter:domain"})
+	yield soup.find("meta", {"property": "og:site_name"})
 
-def _bbc2Article(soup):
-	title = soup.find("h1").text.strip()
-	g = soup.find("div", class_ = "story-body__inner")
-	# for elm in soup.find_all('span', class_="off-screen"):
-	# 	elm.decompose()
-	# for elm in soup.find_all('ul', class_="story-body__unordered-list"):
-	# 	elm.decompose()
-	# for elm in soup.find_all('span', class_="story-image-copyright"):
-	# 	elm.decompose()
-	# for img in soup.find_all("div", class_="js-delayed-image-load"):
-	# 	b = soup.new_tag("figure", width=img['data-width'], height=img['data-height'])
-	# 	b.append(soup.new_tag("img", src = img["data-src"], width=img['data-width'], height=img['data-height']))
-	# 	img.replace_with(b)
-	# for section in soup.find_all("section"):
-	# 	b = soup.new_tag("p")
-	# 	b.append(BeautifulSoup(str(section), features="lxml"))
-	# 	section.replace_with(b)
-	return _Article(title, 'BBC', g)
+def _findPossibleRawContent(item_iterator):
+	for item in item_iterator:
+		if not item:
+			continue
+		r = _findRawContent(item)
+		if r:
+			return r
+
+def _findOrgName(soup):
+	head = str(soup.find('head'))
+	if matchKey(head, ['bbc']):
+		return 'BBC', True
+	if matchKey(head, ['nyt', 'new york times']):
+		return 'NYT', True
+	if matchKey(head, ['stackoverflow']):
+		return 'StackOverflow', False
+	if matchKey(head, ['medium']):
+		return 'Medium', False
+	if matchKey(head, ['dw.come']):
+		return 'DW', True
+	r = _findPossibleRawContent(_yieldPossibleOrgItem(soup))
+	if r:
+		return r, False
+	return 'Other', False
+
+def _findAuthor(soup):
+	author_name = _findPossibleRawContent(_yieldPossibleAuthorItem(soup))
+	org, required = _findOrgName(soup)
+	if not author_name:
+		return org
+	if not required:
+		return author_name
+	return author_name + ' - ' + org
 
 ADS_WORDS = [
 	'The Times is committed', 
@@ -78,73 +77,6 @@ ADS_WORDS = [
 	'《纽约时报》推出每日中文简报',
 	'订阅《纽约时报》中文简报',
 ]
-
-def _nyt2Article(soup):
-	title = soup.find("meta", {"property": "twitter:title"})['content'].strip()
-	author = soup.find("meta", {"name": "byl"})['content'].strip()
-	g = soup.find("article")
-	# for link in soup.find_all("a"):
-	# 	if not '英文版' in link.text:
-	# 		link.replace_with(link.text)
-	# for item in soup.find_all("div", class_="article-header"):
-	# 	item.decompose()
-	# for item in soup.find_all("small"):
-	# 	item.decompose()
-	# for item in soup.find_all("header"):
-	# 	item.decompose()
-	# for item in soup.find_all("div", {"id":"top-wrapper"}):
-	# 	item.decompose()
-	# for item in soup.find_all("div", class_="bottom-of-article"):
-	# 	item.decompose()
-	# for item in soup.find_all("div", {"id":"bottom-wrapper"}):
-	# 	item.decompose()
-	# for item in soup.find_all("div", class_="article-paragraph"):
-	# 	if matchKey(item.text, ADS_WORDS):
-	# 		item.decompose()
-	# 	elif item.text in ['广告']:
-	# 		item.decompose()
-	# 	else:
-	# 		wrapper = soup.new_tag("p")
-	# 		wrapper.append(BeautifulSoup(str(item), features="lxml"))
-	# 		item.replace_with(wrapper)
-	# for item in soup.find_all("p"):
-	# 	if matchKey(item.text, ADS_WORDS):
-	# 		item.decompose()
-	for item in soup.find_all("footer", class_="author-info"):
-		for subitem in item.find_all("a"):
-			if subitem.text and "英文版" in subitem.text:
-				item.replace_with(subitem)
-				break
-	return _Article(title, author + ' - NYT', g)
-
-def _telegraph2Article(soup):
-	title = soup.find("meta", {"name": "twitter:title"})['content'].strip()
-	author = soup.find("meta", {"property": "article:author"})['content'].strip()
-	g = soup.find("article")
-	# item = soup.find('h1')
-	# if item:
-	# 	item.decompose()
-	# item = soup.find('address')
-	# if item:
-	# 	item.decompose()
-	return _Article(title, author, g)
-
-def _getArticleFromSoup(soup, url):
-	if "mp.weixin.qq.com" in url:
-		return _wechat2Article(soup)
-	if "stackoverflow.com" in url:
-		return _stackoverflow2Article(soup)
-	if "bbc.com" in url:
-		return _bbc2Article(soup)
-	if "bbc.in" in url:
-		return _bbc2Article(soup)
-	if "nytimes.com" in url:
-		return _nyt2Article(soup)
-	if "telegra.ph" in url:
-		return _telegraph2Article(soup)
-	if "nyt" in url:
-		return _nyt2Article(soup)
-	return _Article(None, None, None)
 
 def _getInnerArticle(soup):
 	soup = soup.find("article") or soup
@@ -233,7 +165,7 @@ def _findText(soup, doc):
 	return doc.content()
 
 
-def _findRawTitle(item):
+def _findRawContent(item):
 	if item.has_attr('content'):
 		title = item['content'].strip()
 		if title:
@@ -264,7 +196,7 @@ def _yieldPossibleTitleItem(soup):
 	yield soup.find("h2")
 
 def _findTitleFromItem(item):
-	raw = _findRawTitle(item)
+	raw = _findRawContent(item)
 	return _cleanupRawTitle(raw) 
 
 def _findTitle(soup, doc):
@@ -272,7 +204,7 @@ def _findTitle(soup, doc):
 		if not item:
 			continue
 		result = _findTitleFromItem(item)
-		if len(result) < 200:
+		if result and len(result) < 200:
 			return result
 	print('DEBUG WARNING, SHOULD NOT BE HERE')
 	return _cleanupRawTitle(doc.title())
@@ -281,13 +213,9 @@ def _getArticle(url):
 	r = requests.get(url)
 	soup = BeautifulSoup(r.text, 'html.parser')
 	doc = Document(r.text)
-	article = _getArticleFromSoup(soup, url)
 	article.title = _findTitle(soup, doc)
-	_findText(soup, doc)
-	# article.text = _findText(soup, doc)
-
-	# if not article.text:
-	# 	article.text = doc.content()
+	article.text = _findText(soup, doc)
+	article.author = _findAuthor(soup)
 	return article
 
 def _trimUrl(url):
@@ -390,6 +318,3 @@ def _test():
 
 
 _test()
-
-
-
