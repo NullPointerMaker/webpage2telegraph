@@ -60,7 +60,7 @@ def _findOrgName(soup):
 	r = _findPossibleRawContent(_yieldPossibleOrgItem(soup))
 	if r:
 		return r, False
-	return 'Other', False
+	return 'Source', False
 
 def _findAuthor(soup):
 	author_name = _findPossibleRawContent(_yieldPossibleAuthorItem(soup))
@@ -210,13 +210,12 @@ def _findTitle(soup, doc):
 	return _cleanupRawTitle(doc.title())
 
 def _getArticle(url):
+	print(1, url)
 	r = requests.get(url)
+	print(2, url)
 	soup = BeautifulSoup(r.text, 'html.parser')
 	doc = Document(r.text)
-	article.title = _findTitle(soup, doc)
-	article.text = _findText(soup, doc)
-	article.author = _findAuthor(soup)
-	return article
+	return _Article(_findTitle(soup, doc), _findAuthor(soup), _findText(soup, doc))
 
 def _trimUrl(url):
 	if not '://' in url:
@@ -307,13 +306,9 @@ urls = [
 
 def _test():
 	random.shuffle(urls)
-	for url in urls:
-		r = None
-		try:
-			r = export(url, False)
-		except Exception as e:
-			print(e)
-			tb.print_exc()
+	random.shuffle(urls)
+	for url in urls[:1]:
+		r = export(url, True)
 		print('\t', r, url)
 
 
