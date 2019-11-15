@@ -12,6 +12,8 @@ from readability import Document
 import random
 from telegram_util import matchKey
 
+factory = BeautifulSoup("<div></div>", features="lxml")
+
 class _Article(object):
 	def __init__(self, title, author, text):
 		self.title = title
@@ -71,11 +73,14 @@ def _findAuthor(soup):
 		return author_name
 	return author_name + ' - ' + org
 
-ADS_WORDS = [
-	'The Times is committed', 
-	'Follow The New York Times',
+DIV_AD_WORDS = [
 	'《纽约时报》推出每日中文简报',
 	'订阅《纽约时报》中文简报',
+]
+
+P_AD_WORDS = [
+	'The Times is committed', 
+	'Follow The New York Times',
 ]
 
 def _getInnerArticle(soup):
@@ -114,19 +119,24 @@ def _replaceOfftopicLink(soup):
 
 def _tagReplace(soup):
 	for img in soup.find_all("img"):
-		b = soup.new_tag("figure")
-		b.append(soup.new_tag("img", src = img["data-src"]))
+		if not img.has_attr('data-src'):
+			continue
+		b = factory.new_tag("figure")
+		b.append(factory.new_tag("img", src = img['data-src']))
 		img.append(b)
 	for img in soup.find_all("div", class_="js-delayed-image-load"):
-		b = soup.new_tag("figure", width=img['data-width'], height=img['data-height'])
-		b.append(soup.new_tag("img", src = img["data-src"], width=img['data-width'], height=img['data-height']))
+		b = factory.new_tag("figure", width=img['data-width'], height=img['data-height'])
+		b.append(factory.new_tag("img", src = img['data-src'], width=img['data-width'], height=img['data-height']))
 		img.replace_with(b)
 	for section in soup.find_all("section"):
-		b = soup.new_tag("p")
+		b = factory.new_tag("p")
 		b.append(BeautifulSoup(str(section), features="lxml"))
 		section.replace_with(b)
 	for item in soup.find_all("div", class_="article-paragraph"):
-		wrapper = soup.new_tag("p")
+		if matchKey(item.text, DIV_AD_WORDS):
+			item.decompose()
+			continue
+		wrapper = factory.new_tag("p")
 		wrapper.append(BeautifulSoup(str(item), features="lxml"))
 		item.replace_with(wrapper)
 	return soup
@@ -134,11 +144,10 @@ def _tagReplace(soup):
 def _removeAds(soup):
 	lists = [
 		soup.find_all("p"),
-		soup.find_all("div")
 	]
 	for l in lists:
 		for item in l:
-			if matchKey(item.text, ADS_WORDS) or item.text in ['广告']:
+			if matchKey(item.text, P_AD_WORDS) or item.text in ['广告']:
 				item.decompose()
 	for item in soup.find_all("footer", class_="author-info"):
 		for subitem in item.find_all("a"):
@@ -210,9 +219,7 @@ def _findTitle(soup, doc):
 	return _cleanupRawTitle(doc.title())
 
 def _getArticle(url):
-	print(1, url)
 	r = requests.get(url)
-	print(2, url)
 	soup = BeautifulSoup(r.text, 'html.parser')
 	doc = Document(r.text)
 	return _Article(_findTitle(soup, doc), _findAuthor(soup), _findText(soup, doc))
@@ -307,7 +314,7 @@ urls = [
 def _test():
 	random.shuffle(urls)
 	random.shuffle(urls)
-	for url in urls[:1]:
+	for url in urls:
 		r = export(url, True)
 		print('\t', r, url)
 
