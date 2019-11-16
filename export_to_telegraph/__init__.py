@@ -14,23 +14,15 @@ from telegram_util import matchKey
 
 factory = BeautifulSoup("<div></div>", features="lxml")
 
-OFFTOPIC_CLASSES = [
-	'social', 
-	'ads', 
-	'comment', 
-	'latest', 
-	'widget', 
-	'more', 
-	'button', 
-	'fb',
-	'cn-carousel-medium-strip',
-	'video__end-slate__top-wrapper',
-	'metadata',
-	'el__article--embed',
-	'sidebar',
-	'signup',
-	'related',
-	'disclaimer',
+OFFTOPIC_TAG = ['small', 'h1', 'address', 'meta', 'script', 'noscript']
+
+OFFTOPIC_ATT = [
+	'social', 'ads', 'comment', 'latest', 'widget', 'more', 'button', 'fb', 
+	'cn-carousel-medium-strip', 'video__end-slate__top-wrapper', 'metadata', 
+	'el__article--embed', 'sidebar', 'signup', 'related', 'disclaimer', 'off-screen', 
+	'story-body__unordered-list', 'story-image-copyright', 'article-header', 
+	'top-wrapper', 'bottom-of-article', 'bottom-wrapper', 'copyright', 'linkList', 
+	'display:none;', 'accordion', 'el-editorial-source', 'video__end-slate__tertiary-title' 
 ]
 
 class _Article(object):
@@ -54,7 +46,10 @@ def _yieldPossibleAuthorItem(soup):
 	yield soup.find("span", {"class" : "byline__name"})
 	yield soup.find("meta", {"property": "article:author"})
 	yield soup.find("meta", {"name": "author"})
-
+	for item in soup.find_all('meta'):
+		if 'author' in str(item.attrs):
+			yield item
+		
 def _yieldPossibleOrgItem(soup):
 	yield soup.find("meta", {"property": "twitter:site"})
 	yield soup.find("meta", {"property": "twitter:domain"})
@@ -140,34 +135,8 @@ def _isOffTopic(classes):
 	return False
 
 def _decomposeOfftopic(soup):
-	lists = [
-		soup.find_all('span', class_="off-screen"),
-		soup.find_all('ul', class_="story-body__unordered-list"),
-		soup.find_all('span', class_="story-image-copyright"),
-		soup.find_all("div", class_="article-header"),
-		soup.find_all("small"),
-		soup.find_all("div", {"id":"top-wrapper"}),
-		soup.find_all("div", class_="bottom-of-article"),
-		soup.find_all("div", {"id":"bottom-wrapper"}),
-		soup.find_all('h1'),
-		soup.find_all('address'),
-		soup.find_all('span', {"itemprop": "copyrightHolder"}),
-		soup.find_all('div', class_="linkList"),
-		soup.find_all('div', {"style": "display:none;"}),
-		soup.find_all('div', class_="accordion"),
-		soup.find_all('cite', class_="el-editorial-source"),
-		soup.find_all("h4", class_ = 'video__end-slate__tertiary-title'),
-		soup.find_all("meta"),
-		soup.find_all("script"),
-		soup.find_all("noscript"),
-	]
-	for r in lists:
-		for elm in r:	
-			elm.decompose()
-
 	for item in soup.find_all():
-		if item.attrs and item.has_attr('class') and \
-			_isOffTopic(str(item['class'])):
+		if _isOffTopic(str(item.attrs)) or item.name in OFFTOPIC_TAG:
 			item.decompose()
 
 	for item in soup.find_all("header"):
@@ -240,9 +209,6 @@ def _tagReplace(soup):
 	return soup
 
 def _removeAds(soup):
-	lists = [
-		soup.find_all("p"),
-	]
 	for item in soup.find_all("footer", class_="author-info"):
 		for subitem in item.find_all("a"):
 			if subitem.text and "英文版" in subitem.text:
@@ -277,7 +243,6 @@ def _findText(soup, doc):
 		return result
 	return doc.content()
 
-
 def _findRawContent(item):
 	if item.has_attr('content'):
 		title = item['content'].strip()
@@ -307,6 +272,9 @@ def _yieldPossibleTitleItem(soup):
 	yield soup.find("title")
 	yield soup.find("h1")
 	yield soup.find("h2")
+	for item in soup.find_all('meta'):
+		if 'title' in str(item.attrs):
+			yield item
 
 def _findTitleFromItem(item):
 	raw = _findRawContent(item)
@@ -321,7 +289,6 @@ def _findTitle(soup, doc):
 			return result
 	print('DEBUG WARNING, SHOULD NOT BE HERE')
 	return _cleanupRawTitle(doc.title())
-
 
 def _trimWebpage(raw):
 	anchor = '<!-- detail_toolbox -->'
@@ -355,10 +322,12 @@ def getArticle(url, throw_exception=False):
 			raise e
 
 def isConfident(url, soup):
-	if soup.text and len(soup.text) > 400 and soup.find('figure'):
-		return True
-	if matchKey(url, ['mp.weixin.qq.com', 'stackoverflow', 'bbc', 'nyt', 'telegra']):
-		return True
+	if not _seemsValidText(soup):
+		return False
+	for item in soup.find_all('figure'):
+		img = item.find('img')
+		if img and img.get('src', '').startswith('http'):
+			return True
 	return False
 
 def export(url, throw_exception=False, force=False):
@@ -377,17 +346,16 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
-	# 'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
-	# 'bbc.in/2W2Gohc',
-	# 'https://t.co/Joty1jyQwt',
-	# 'https://t.co/k2kLBpdQhl',
-	# 'https://t.co/4ik2VsUHeB',
-	# 'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
 	'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
 	'https://www.idiva.com/news-opinion/womens-issues/transgender-cabbies-who-are-making-indian-roads-safer-for-women/18004255?fbclid=IwAR3aOtNX0fOukmJ-JNJiImobMfPyVhQ63-i5oEUX38_TRlU4-aBLvHwmaA0',
 	'https://www.eurekalert.org/pub_releases/2019-11/lu-ada111519.php',
-	# 'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html'
-
+	'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html'
+	'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
+	'bbc.in/2W2Gohc',
+	'https://t.co/Joty1jyQwt',
+	'https://t.co/k2kLBpdQhl',
+	'https://t.co/4ik2VsUHeB',
+	'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
 ]
 
 def _test():
