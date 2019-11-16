@@ -17,13 +17,15 @@ factory = BeautifulSoup("<div></div>", features="lxml")
 OFFTOPIC_TAG = ['small', 'h1', 'address', 'meta', 'script', 'noscript']
 
 OFFTOPIC_ATT = [
-	'social', 'ads', 'comment', 'latest', 'widget', 'more', 'button', 'fb', 
+	'social', 'comment', 'latest', 'widget', 'more', 'button', 'facebook', 
 	'cn-carousel-medium-strip', 'video__end-slate__top-wrapper', 'metadata', 
 	'el__article--embed', 'sidebar', 'signup', 'related', 'disclaimer', 'off-screen', 
 	'story-body__unordered-list', 'story-image-copyright', 'article-header', 
 	'top-wrapper', 'bottom-of-article', 'bottom-wrapper', 'copyright', 'linkList', 
 	'display:none;', 'accordion', 'el-editorial-source', 'video__end-slate__tertiary-title' 
 ]
+
+OFFTOPIC_CLASSES = ['ads']
 
 class _Article(object):
 	def __init__(self, title, author, text):
@@ -127,16 +129,21 @@ def _getInnerArticle(soup):
 			soup = candidate
 	return soup
 
-def _isOffTopic(classes):
-	if matchKey(classes, OFFTOPIC_CLASSES):
+def _isOffTopic(attrs):
+	if matchKey(attrs, OFFTOPIC_ATT):
 		return True
-	if 'hidden' in classes and not 'lazy' in classes:
+	if 'hidden' in attrs and not 'lazy' in attrs:
 		return True
 	return False
 
 def _decomposeOfftopic(soup):
 	for item in soup.find_all():
-		if _isOffTopic(str(item.attrs)) or item.name in OFFTOPIC_TAG:
+		if _isOffTopic(str(item.attrs)) or \
+			item.name in OFFTOPIC_TAG:
+			item.decompose()
+
+	for c in OFFTOPIC_CLASSES:
+		for item in soup.find_all(class_=c):
 			item.decompose()
 
 	for item in soup.find_all("header"):
@@ -349,17 +356,18 @@ urls = [
 	'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
 	'https://www.idiva.com/news-opinion/womens-issues/transgender-cabbies-who-are-making-indian-roads-safer-for-women/18004255?fbclid=IwAR3aOtNX0fOukmJ-JNJiImobMfPyVhQ63-i5oEUX38_TRlU4-aBLvHwmaA0',
 	'https://www.eurekalert.org/pub_releases/2019-11/lu-ada111519.php',
-	'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html'
 	'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
 	'bbc.in/2W2Gohc',
 	'https://t.co/Joty1jyQwt',
 	'https://t.co/k2kLBpdQhl',
 	'https://t.co/4ik2VsUHeB',
 	'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
+	# 'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html',
 ]
 
 def _test():
 	for url in urls:
+		print(url)
 		r = export(url, True, True)
 		print('\t', r, url)
 
