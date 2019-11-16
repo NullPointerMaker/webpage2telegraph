@@ -28,10 +28,11 @@ OFFTOPIC_ATT = [
 OFFTOPIC_CLASSES = ['ads']
 
 class _Article(object):
-	def __init__(self, title, author, text):
+	def __init__(self, title, author, text, url = None):
 		self.title = title
 		self.author = author
 		self.text = text
+		self.url = url
 
 def _getPoster():
 	global token
@@ -89,7 +90,7 @@ def _findAuthor(soup):
 	org, required = _findOrgName(soup)
 	if not author_name:
 		return org
-	if not required:
+	if not required or '-' in author_name:
 		return author_name
 	return author_name + ' - ' + org
 
@@ -176,6 +177,8 @@ def _tagReplace(soup):
 			img['src'] = 'https://www.dw.com' + img['src']
 		if img['src'].startswith('//'):
 			img['src'] = 'https:' + img['src']
+		if 'img-box' in img.parent.get('class'):
+			img.parent.replace_with(img)
 		if img.parent.name == 'figure' or not img.has_attr('src'):
 			continue
 		figure = factory.new_tag("figure")
@@ -213,6 +216,9 @@ def _tagReplace(soup):
 			for x in item.find_all(recursive=False):
 				new_item.append(x)
 			item.replace_with(new_item)
+	for item in soup.find_all('figure'):
+		for cite in item.find_all('cite'):
+			cite.decompose()
 	return soup
 
 def _removeAds(soup):
@@ -304,11 +310,18 @@ def _trimWebpage(raw):
 		return raw[:index]
 	return raw
 
+def _findUrl(soup):
+	address = soup.find('address')
+	if not address:
+		return
+	link = address.find('a')
+	return link and link.get('href')
+
 def _getArticle(url):
 	r = requests.get(url)
 	soup = BeautifulSoup(_trimWebpage(r.text), 'html.parser')
 	doc = Document(r.text)
-	return _Article(_findTitle(soup, doc), _findAuthor(soup), _findText(soup, doc))
+	return _Article(_findTitle(soup, doc), _findAuthor(soup), _findText(soup, doc), _findUrl(soup))
 
 def _trimUrl(url):
 	if not '://' in url:
@@ -344,7 +357,7 @@ def export(url, throw_exception=False, force=False):
 		r = p.post(
 			title = article.title, 
 			author = article.author, 
-			author_url = _formaturl(url), 
+			author_url = _formaturl(article.url or url), 
 			text = str(article.text)[:80000])
 		if force or isConfident(url, article.text):
 			return _trimUrl(r['url'])
@@ -353,22 +366,25 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
-	'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
-	'https://www.idiva.com/news-opinion/womens-issues/transgender-cabbies-who-are-making-indian-roads-safer-for-women/18004255?fbclid=IwAR3aOtNX0fOukmJ-JNJiImobMfPyVhQ63-i5oEUX38_TRlU4-aBLvHwmaA0',
-	'https://www.eurekalert.org/pub_releases/2019-11/lu-ada111519.php',
-	'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
-	'bbc.in/2W2Gohc',
-	'https://t.co/Joty1jyQwt',
-	'https://t.co/k2kLBpdQhl',
-	'https://t.co/4ik2VsUHeB',
-	'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
+	'https://cn.nytimes.com/china/20191112/hong-kong-protests-volunteer/?utm_source=tw-nytimeschinese&utm_medium=social&utm_campaign=cur',
+	# 'https://telegra.ph/%E9%A6%99%E6%B8%AF%E6%8A%97%E8%AE%AE%E8%80%85%E8%83%8C%E5%90%8E%E7%9A%84%E5%BF%97%E6%84%BF%E8%80%85%E5%A4%A7%E5%86%9B-11-16',
+	# 'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
+	# 'https://www.idiva.com/news-opinion/womens-issues/transgender-cabbies-who-are-making-indian-roads-safer-for-women/18004255?fbclid=IwAR3aOtNX0fOukmJ-JNJiImobMfPyVhQ63-i5oEUX38_TRlU4-aBLvHwmaA0',
+	# 'https://www.eurekalert.org/pub_releases/2019-11/lu-ada111519.php',
+	# 'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
+	# 'bbc.in/2W2Gohc',
+	# 'https://t.co/Joty1jyQwt',
+	# 'https://t.co/k2kLBpdQhl',
+	# 'https://t.co/4ik2VsUHeB',
+	# 'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
 	# 'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html',
 ]
 
 def _test():
 	for url in urls:
-		print(url)
+		print('原文：', url)
 		r = export(url, True, True)
-		print('\t', r, url)
+		print('导出：', r)
+		print('\n\n')
 
 _test()
