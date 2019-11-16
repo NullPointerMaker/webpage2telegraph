@@ -52,9 +52,9 @@ def _findPossibleRawContent(item_iterator, words_to_ignore = []):
 
 def _findOrgName(soup):
 	head = str(soup.find('head'))
-	if matchKey(head, ['bbc']):
+	if matchKey(head, ['bbc.com']):
 		return 'BBC', True
-	if matchKey(head, ['nyt', 'new york times']):
+	if matchKey(head, ['nyt.com', 'new york times']):
 		return 'NYT', True
 	if matchKey(head, ['stackoverflow']):
 		return 'StackOverflow', False
@@ -304,7 +304,14 @@ def getArticle(url, throw_exception=False):
 		if throw_exception:
 			raise e
 
-def export(url, throw_exception=False):
+def isConfident(url, soup):
+	if soup.text and len(soup.text) > 100 and soup.find('figure'):
+		return True
+	if matchKey(url, ['mp.weixin.qq.com', 'stackoverflow', 'bbc', 'nyt', 'telegra']):
+		return True
+	return False
+
+def export(url, throw_exception=False, force=False):
 	try:
 		p = _getPoster()
 		article = getArticle(url, throw_exception)
@@ -313,7 +320,8 @@ def export(url, throw_exception=False):
 			author = article.author, 
 			author_url = _formaturl(url), 
 			text = str(article.text)[:80000])
-		return _trimUrl(r['url'])
+		if force or isConfident(url, article.text):
+			return _trimUrl(r['url'])
 	except Exception as e:
 		if throw_exception:
 			raise e
@@ -326,11 +334,12 @@ urls = [
 	# 'https://t.co/4ik2VsUHeB',
 	# 'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
 	# 'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
+	'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html'
 ]
 
 def _test():
 	for url in urls:
-		r = export(url, True)
+		r = export(url, True, True)
 		print('\t', r, url)
 
 _test()
