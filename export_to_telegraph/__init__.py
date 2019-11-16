@@ -14,7 +14,20 @@ from telegram_util import matchKey
 
 factory = BeautifulSoup("<div></div>", features="lxml")
 
-OFFTOPIC_CLASSES = ['social', 'side', 'ads', 'comment', 'latest', 'widget', 'more']
+OFFTOPIC_CLASSES = [
+	'social', 
+	'ads', 
+	'comment', 
+	'latest', 
+	'widget', 
+	'more', 
+	'button', 
+	'fb',
+	'cn-carousel-medium-strip',
+	'video__end-slate__top-wrapper',
+	'metadata',
+	'el__article--embed',
+]
 
 class _Article(object):
 	def __init__(self, title, author, text):
@@ -36,6 +49,7 @@ def _yieldPossibleAuthorItem(soup):
 	yield soup.find("a", {"id" : "js_name"})
 	yield soup.find("span", {"class" : "byline__name"})
 	yield soup.find("meta", {"property": "article:author"})
+	yield soup.find("meta", {"name": "author"})
 
 def _yieldPossibleOrgItem(soup):
 	yield soup.find("meta", {"property": "twitter:site"})
@@ -58,7 +72,7 @@ def _findOrgName(soup):
 		return 'NYT', True
 	if matchKey(head, ['stackoverflow']):
 		return 'StackOverflow', False
-	if matchKey(head, ['medium']):
+	if matchKey(head, ['medium.com']):
 		return 'Medium', False
 	if matchKey(head, ['dw.come']):
 		return 'DW', True
@@ -113,7 +127,9 @@ def _decomposeOfftopic(soup):
 		soup.find_all('div', class_="linkList"),
 		soup.find_all('div', {"style": "display:none;"}),
 		soup.find_all('div', class_="accordion"),
-		soup.find_all('noscript')
+		soup.find_all('noscript'),
+		soup.find_all('cite', class_="el-editorial-source"),
+		soup.find_all("h4", class_ = 'video__end-slate__tertiary-title'),
 	]
 	for r in lists:
 		for elm in r:	
@@ -122,6 +138,8 @@ def _decomposeOfftopic(soup):
 	for item in soup.find_all('div'):
 		if item.attrs and item.has_attr('class') and \
 			matchKey(str(item['class']), OFFTOPIC_CLASSES):
+			if matchKey(item.text, ['southern Vietnam']):
+				print(item)
 			item.decompose()
 
 	for item in soup.find_all("header"):
@@ -148,13 +166,15 @@ def _tagReplace(soup):
 	for img in soup.find_all("img"):
 		if img.has_attr('data-src'):
 			img['src'] = img['data-src']
-		if img.parent.name == 'figure':
-			continue
-		if not img.has_attr('src'):
-			continue
-		figure = factory.new_tag("figure")
+		if img.has_attr('data-src-large'):
+			img['src'] = img['data-src-large']
 		if img['src'].startswith('/image'):
 			img['src'] = 'https://www.dw.com' + img['src']
+		if img['src'].startswith('//'):
+			img['src'] = 'https:' + img['src']
+		if img.parent.name == 'figure' or not img.has_attr('src'):
+			continue
+		figure = factory.new_tag("figure")
 		figure.append(factory.new_tag("img", src = img['src']))
 		caption = factory.new_tag("figcaption")
 		if img.has_attr('title'):
@@ -305,7 +325,7 @@ def getArticle(url, throw_exception=False):
 			raise e
 
 def isConfident(url, soup):
-	if soup.text and len(soup.text) > 100 and soup.find('figure'):
+	if soup.text and len(soup.text) > 400 and soup.find('figure'):
 		return True
 	if matchKey(url, ['mp.weixin.qq.com', 'stackoverflow', 'bbc', 'nyt', 'telegra']):
 		return True
@@ -327,19 +347,19 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
-	# 'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
-	# 'bbc.in/2W2Gohc',
-	# 'https://t.co/Joty1jyQwt',
-	# 'https://t.co/k2kLBpdQhl',
-	# 'https://t.co/4ik2VsUHeB',
-	# 'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
-	# 'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
-	'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html'
+	'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
+	'bbc.in/2W2Gohc',
+	'https://t.co/Joty1jyQwt',
+	'https://t.co/k2kLBpdQhl',
+	'https://t.co/4ik2VsUHeB',
+	'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
+	'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
+	# 'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html'
 ]
 
 def _test():
 	for url in urls:
-		r = export(url, True, True)
+		r = export(url, True)
 		print('\t', r, url)
 
 _test()
