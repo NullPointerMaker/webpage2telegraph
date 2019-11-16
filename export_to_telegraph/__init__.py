@@ -167,34 +167,68 @@ def _replaceOfftopicLink(soup):
 				link.replace_with(link.find('img'))
 	return soup
 
-def _tagReplace(soup):
-	for img in soup.find_all("img"):
-		if img.has_attr('data-src'):
-			img['src'] = img['data-src']
-		if img.has_attr('data-src-large'):
-			img['src'] = img['data-src-large']
-		if not img.has_attr('src'):
-			print(img) # debug
-			continue
-		if img['src'].startswith('/image'):
-			img['src'] = 'https://www.dw.com' + img['src']
-		if img['src'].startswith('//'):
-			img['src'] = 'https:' + img['src']
-		if 'img-box' in img.parent.get('class', []):
-			img.parent.replace_with(img)
-		if img.parent.name == 'figure' or not img.has_attr('src'):
-			continue
-		figure = factory.new_tag("figure")
-		figure.append(factory.new_tag("img", src = img['src']))
+def _getFullUrl(raw, domain):
+	if raw.startswith('//'):
+		return 'https:' = raw
+	if raw.startswith('/'):
+		return domain + raw
+	return raw
+
+IMG_ATTRS = ['src', 'data-src', 'data-src-large']
+
+def _getImgInsideFigure(figure, domain):
+	for raw_img in figure.find_all():
+		for attrs in IMG_ATTRS:
+			if raw_img.get(attrs):
+				return factory.new_tag("img", src = _getFullUrl(raw_img[attrs], domain), title = raw_img.get('title'))
+
+def _cleanupFigure(figure, domain):
+	img = _getImgInsideFigure(figure, domain)
+	if not img:
+		print('WARNING: figure without img')
+		print(str(figure))
+		figure.decompose()
+		continue
+	caption = figure.find('figcaption')
+	if not caption and img.get('title'):
 		caption = factory.new_tag("figcaption")
-		if img.has_attr('title'):
-			caption.append(img['title'])
-		figure.append(caption)
-		img.replace_with(figure)
-	for img in soup.find_all("div", class_="js-delayed-image-load"):
-		b = factory.new_tag("figure", width=img['data-width'], height=img['data-height'])
-		b.append(factory.new_tag("img", src = img['data-src'], width=img['data-width'], height=img['data-height']))
-		img.replace_with(b)
+		caption.append(img['title'])
+	new_figure = factory.new_tag("figure")
+	new_figure.append(img)
+	if caption:
+		new_figure.append(caption)
+	for cite in new_figure.find_all('cite'):
+		cite.decompose()
+	figure.replace_with(new_figure)
+
+def _parseDomain(url):
+	if not url.startswith('http'):
+		return
+	r = '/'.join(url.split('/')[:3])
+	print(r)
+	if r.count('/') == 2 and 'http' in r:
+		return r
+
+def _findDomain(soup, url):
+	for meta in soup.find('meta'):
+		for att in meta.attrs:
+			if 'url' in att.lower():
+				r = _parseDomain(meta[att])
+	return _parseDomain(url)
+
+def _cleanupImages(soup, url):
+	domain = _findDomain(soup, url)
+	for figure in soup.find_all('figure'):
+		_cleanupFigure(figure, domain)
+	for img in soup.find_all('img'):
+		if img.parent.name != 'figure':
+			figure = factory.new_tag("figure")
+			figure.append(img)
+			_cleanupFigure(figure, domain)
+	return soup
+		
+
+def _tagReplace(soup):
 	for item in soup.find_all("div", class_="article-paragraph"):
 		if matchKey(item.text, DIV_AD_WORDS):
 			item.decompose()
@@ -219,9 +253,6 @@ def _tagReplace(soup):
 			for x in item.find_all(recursive=False):
 				new_item.append(x)
 			item.replace_with(new_item)
-	for item in soup.find_all('figure'):
-		for cite in item.find_all('cite'):
-			cite.decompose()
 	return soup
 
 def _removeAds(soup):
@@ -232,11 +263,14 @@ def _removeAds(soup):
 				break
 	return soup
 
-def _findTextFromSoup(soup):
+def _findTextFromSoup(soup, url):
 	with open('tmp_0.html', 'w') as f:
 		f.write(str(soup))
 	soup = _getInnerArticle(soup)
 	with open('tmp_a.html', 'w') as f:
+		f.write(str(soup))
+	soup = _cleanupImages(soup, url)
+	with open('tmp_a1.html', 'w') as f:
 		f.write(str(soup))
 	soup = _decomposeOfftopic(soup)
 	with open('tmp_b.html', 'w') as f:
@@ -250,11 +284,11 @@ def _findTextFromSoup(soup):
 	soup = _removeAds(soup)
 	return soup
 
-def _findText(soup, doc):
-	result = _findTextFromSoup(soup)
+def _findText(soup, doc, url):
+	result = _findTextFromSoup(soup, url)
 	if result:
 		return result
-	result = _findTextFromSoup(BeautifulSoup(doc.content))
+	result = _findTextFromSoup(BeautifulSoup(doc.content), url)
 	if result:
 		return result
 	return doc.content()
@@ -324,7 +358,11 @@ def _getArticle(url):
 	r = requests.get(url)
 	soup = BeautifulSoup(_trimWebpage(r.text), 'html.parser')
 	doc = Document(r.text)
-	return _Article(_findTitle(soup, doc), _findAuthor(soup), _findText(soup, doc), _findUrl(soup))
+	return _Article(
+		_findTitle(soup, doc), 
+		_findAuthor(soup), 
+		_findText(soup, doc, url), 
+		_findUrl(soup))
 
 def _trimUrl(url):
 	if not '://' in url:
@@ -345,6 +383,8 @@ def getArticle(url, throw_exception=False):
 			raise e
 
 def isConfident(url, soup):
+	if not matchKey(url, ['mp.weixin.qq.com', 'stackoverflow', 'bbc', 'nyt', 'telegra']):
+		return False
 	if not _seemsValidText(soup):
 		return False
 	for item in soup.find_all('figure'):
@@ -369,6 +409,7 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
+	'https://www.telegraph.co.uk/global-health/women-and-girls/dumped-babies-just-tip-iceberg-deadly-consequences-curbing-reproductive/?fbclid=IwAR0uwFvu3QjbhnYyMxfeN2PtlczcgoiWASrEdRsikQ1Y5TTAO6_PpGH2nDk',
 	# 'https://cn.nytimes.com/china/20191112/hong-kong-protests-volunteer/?utm_source=tw-nytimeschinese&utm_medium=social&utm_campaign=cur',
 	# 'https://telegra.ph/%E9%A6%99%E6%B8%AF%E6%8A%97%E8%AE%AE%E8%80%85%E8%83%8C%E5%90%8E%E7%9A%84%E5%BF%97%E6%84%BF%E8%80%85%E5%A4%A7%E5%86%9B-11-16',
 	# 'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
