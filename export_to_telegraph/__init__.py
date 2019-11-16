@@ -27,6 +27,10 @@ OFFTOPIC_CLASSES = [
 	'video__end-slate__top-wrapper',
 	'metadata',
 	'el__article--embed',
+	'sidebar',
+	'signup',
+	'related',
+	'disclaimer',
 ]
 
 class _Article(object):
@@ -102,14 +106,38 @@ P_AD_WORDS = [
 	'Follow The New York Times',
 ]
 
-def _getInnerArticle(soup):
-	soup = soup.find("article") or soup
-	soup = soup.find("div", {"id" : "js_content"}) or soup
-	soup = soup.find("div", class_ = "story-body__inner") or soup
-	soup = soup.find("div", class_ = "answercell") or soup
-	soup = soup.find("div", class_ = "post-text") or soup
-	soup = soup.find("div", {"id" : "bodyContent"}) or soup
+def _seemsValidText(soup):
+	if not soup:
+		return False
+	return soup.text and len(soup.text) > 500
+
+def _seemsValidRawArticle(soup):
+	if not _seemsValidText(soup):
+		return False
+	return not not soup.find('img')
+
+def _getInnerArticle(soup):	
+	applicators = [
+		lambda x: x.find("article"),
+		lambda x: x.find("div", {"id" : "js_content"}),
+		lambda x: x.find("div", class_ = "story-body__inner"),
+		lambda x: x.find("div", class_ = "answercell"),
+		lambda x: x.find("div", class_ = "post-text"),
+		lambda x: x.find("div", {"id" : "bodyContent"}),
+		lambda x: x.find("div", {"id" : "content_JS"}),
+	]
+	for applicator in applicators:
+		candidate = applicator(soup)
+		if _seemsValidRawArticle(candidate):
+			soup = candidate
 	return soup
+
+def _isOffTopic(classes):
+	if matchKey(classes, OFFTOPIC_CLASSES):
+		return True
+	if 'hidden' in classes and not 'lazy' in classes:
+		return True
+	return False
 
 def _decomposeOfftopic(soup):
 	lists = [
@@ -127,19 +155,19 @@ def _decomposeOfftopic(soup):
 		soup.find_all('div', class_="linkList"),
 		soup.find_all('div', {"style": "display:none;"}),
 		soup.find_all('div', class_="accordion"),
-		soup.find_all('noscript'),
 		soup.find_all('cite', class_="el-editorial-source"),
 		soup.find_all("h4", class_ = 'video__end-slate__tertiary-title'),
+		soup.find_all("meta"),
+		soup.find_all("script"),
+		soup.find_all("noscript"),
 	]
 	for r in lists:
 		for elm in r:	
 			elm.decompose()
 
-	for item in soup.find_all('div'):
+	for item in soup.find_all():
 		if item.attrs and item.has_attr('class') and \
-			matchKey(str(item['class']), OFFTOPIC_CLASSES):
-			if matchKey(item.text, ['southern Vietnam']):
-				print(item)
+			_isOffTopic(str(item['class'])):
 			item.decompose()
 
 	for item in soup.find_all("header"):
@@ -355,13 +383,16 @@ urls = [
 	# 'https://t.co/k2kLBpdQhl',
 	# 'https://t.co/4ik2VsUHeB',
 	# 'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
-	# 'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
+	'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
+	'https://www.idiva.com/news-opinion/womens-issues/transgender-cabbies-who-are-making-indian-roads-safer-for-women/18004255?fbclid=IwAR3aOtNX0fOukmJ-JNJiImobMfPyVhQ63-i5oEUX38_TRlU4-aBLvHwmaA0',
+	'https://www.eurekalert.org/pub_releases/2019-11/lu-ada111519.php',
 	# 'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html'
+
 ]
 
 def _test():
 	for url in urls:
-		r = export(url, True)
+		r = export(url, True, True)
 		print('\t', r, url)
 
 _test()
