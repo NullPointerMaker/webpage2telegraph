@@ -12,7 +12,8 @@ from readability import Document
 import random
 from telegram_util import matchKey
 
-factory = BeautifulSoup("<div></div>", features="lxml")
+def fact():
+	return BeautifulSoup("<div></div>", features="lxml")
 
 OFFTOPIC_TAG = ['small', 'h1', 'address', 'meta', 'script', 'noscript']
 
@@ -148,7 +149,7 @@ def _decomposeOfftopic(soup):
 			item.decompose()
 
 	for item in soup.find_all("header"):
-		wrapper = factory.new_tag("p")
+		wrapper = fact().new_tag("p")
 		s = item.find("p", {"id": "article-summary"})
 		if s:
 			wrapper.append(s)
@@ -169,62 +170,78 @@ def _replaceOfftopicLink(soup):
 
 def _getFullUrl(raw, domain):
 	if raw.startswith('//'):
-		return 'https:' = raw
+		return 'https:' + raw
 	if raw.startswith('/'):
 		return domain + raw
 	return raw
 
-IMG_ATTRS = ['src', 'data-src', 'data-src-large']
+IMG_ATTRS = ['data-src-large', 'data-src', 'src']
 
 def _getImgInsideFigure(figure, domain):
 	for raw_img in figure.find_all():
 		for attrs in IMG_ATTRS:
 			if raw_img.get(attrs):
-				return factory.new_tag("img", src = _getFullUrl(raw_img[attrs], domain), title = raw_img.get('title'))
+				r = fact().new_tag("img", src = _getFullUrl(raw_img[attrs], domain))
+				if raw_img.get('title'):
+					r['title'] = raw_img.get('title')
+				return r
 
 def _cleanupFigure(figure, domain):
 	img = _getImgInsideFigure(figure, domain)
 	if not img:
-		print('WARNING: figure without img')
-		print(str(figure))
-		figure.decompose()
-		continue
+		return
 	caption = figure.find('figcaption')
 	if not caption and img.get('title'):
-		caption = factory.new_tag("figcaption")
+		caption = fact().new_tag("figcaption")
 		caption.append(img['title'])
-	new_figure = factory.new_tag("figure")
+	new_figure = fact().new_tag("figure")
 	new_figure.append(img)
 	if caption:
 		new_figure.append(caption)
 	for cite in new_figure.find_all('cite'):
 		cite.decompose()
-	figure.replace_with(new_figure)
+	return new_figure
 
 def _parseDomain(url):
 	if not url.startswith('http'):
 		return
 	r = '/'.join(url.split('/')[:3])
-	print(r)
 	if r.count('/') == 2 and 'http' in r:
 		return r
 
 def _findDomain(soup, url):
-	for meta in soup.find('meta'):
+	for meta in soup.find_all('meta'):
 		for att in meta.attrs:
 			if 'url' in att.lower():
 				r = _parseDomain(meta[att])
 	return _parseDomain(url)
 
+def _getCaption(item):
+	for x in item.find_all():
+		if 'caption' in str(x).lower():
+			caption = fact().new_tag("figcaption")
+			caption.append(x)
+			return caption
+
 def _cleanupImages(soup, url):
 	domain = _findDomain(soup, url)
 	for figure in soup.find_all('figure'):
-		_cleanupFigure(figure, domain)
+		r = _cleanupFigure(figure, domain)
+		if r: 
+			figure.replace_with(r)
 	for img in soup.find_all('img'):
 		if img.parent.name != 'figure':
-			figure = factory.new_tag("figure")
-			figure.append(img)
-			_cleanupFigure(figure, domain)
+			to_replace = img
+			caption = _getCaption(img.parent)
+			figure = fact().new_tag("figure")
+			figure.append(BeautifulSoup(str(img), features="lxml"))
+			if caption:
+				to_replace = img.parent
+				figure.append(caption)
+
+			r = _cleanupFigure(figure, domain)
+			if r:
+				to_replace.replace_with(r)
 	return soup
 		
 
@@ -233,14 +250,14 @@ def _tagReplace(soup):
 		if matchKey(item.text, DIV_AD_WORDS):
 			item.decompose()
 			continue
-		wrapper = factory.new_tag("p")
+		wrapper = fact().new_tag("p")
 		wrapper.append(BeautifulSoup(str(item), features="lxml"))
 		item.replace_with(wrapper)
 	for item in soup.find_all("p"):
 		if matchKey(item.text, P_AD_WORDS) or item.text in ['广告']:
 			item.decompose()
 	for section in soup.find_all("section"):
-		b = factory.new_tag("p")
+		b = fact().new_tag("p")
 		b.append(BeautifulSoup(str(section), features="lxml"))
 		section.replace_with(b)
 	to_remove_tags = [
@@ -249,7 +266,7 @@ def _tagReplace(soup):
 	]
 	for l in to_remove_tags:
 		for item in l:
-			new_item = factory.new_tag("p")
+			new_item = fact().new_tag("p")
 			for x in item.find_all(recursive=False):
 				new_item.append(x)
 			item.replace_with(new_item)
@@ -410,17 +427,17 @@ def export(url, throw_exception=False, force=False):
 
 urls = [
 	'https://www.telegraph.co.uk/global-health/women-and-girls/dumped-babies-just-tip-iceberg-deadly-consequences-curbing-reproductive/?fbclid=IwAR0uwFvu3QjbhnYyMxfeN2PtlczcgoiWASrEdRsikQ1Y5TTAO6_PpGH2nDk',
-	# 'https://cn.nytimes.com/china/20191112/hong-kong-protests-volunteer/?utm_source=tw-nytimeschinese&utm_medium=social&utm_campaign=cur',
-	# 'https://telegra.ph/%E9%A6%99%E6%B8%AF%E6%8A%97%E8%AE%AE%E8%80%85%E8%83%8C%E5%90%8E%E7%9A%84%E5%BF%97%E6%84%BF%E8%80%85%E5%A4%A7%E5%86%9B-11-16',
-	# 'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
-	# 'https://www.idiva.com/news-opinion/womens-issues/transgender-cabbies-who-are-making-indian-roads-safer-for-women/18004255?fbclid=IwAR3aOtNX0fOukmJ-JNJiImobMfPyVhQ63-i5oEUX38_TRlU4-aBLvHwmaA0',
-	# 'https://www.eurekalert.org/pub_releases/2019-11/lu-ada111519.php',
-	# 'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
-	# 'bbc.in/2W2Gohc',
-	# 'https://t.co/Joty1jyQwt',
-	# 'https://t.co/k2kLBpdQhl',
-	# 'https://t.co/4ik2VsUHeB',
-	# 'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
+	'https://cn.nytimes.com/china/20191112/hong-kong-protests-volunteer/?utm_source=tw-nytimeschinese&utm_medium=social&utm_campaign=cur',
+	'https://telegra.ph/%E9%A6%99%E6%B8%AF%E6%8A%97%E8%AE%AE%E8%80%85%E8%83%8C%E5%90%8E%E7%9A%84%E5%BF%97%E6%84%BF%E8%80%85%E5%A4%A7%E5%86%9B-11-16',
+	'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
+	'https://www.idiva.com/news-opinion/womens-issues/transgender-cabbies-who-are-making-indian-roads-safer-for-women/18004255?fbclid=IwAR3aOtNX0fOukmJ-JNJiImobMfPyVhQ63-i5oEUX38_TRlU4-aBLvHwmaA0',
+	'https://www.eurekalert.org/pub_releases/2019-11/lu-ada111519.php',
+	'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
+	'bbc.in/2W2Gohc',
+	'https://t.co/Joty1jyQwt',
+	'https://t.co/k2kLBpdQhl',
+	'https://t.co/4ik2VsUHeB',
+	'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
 	# 'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html',
 ]
 
