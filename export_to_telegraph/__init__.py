@@ -173,11 +173,14 @@ def _tagReplace(soup):
 			img['src'] = img['data-src']
 		if img.has_attr('data-src-large'):
 			img['src'] = img['data-src-large']
+		if not img.has_attr('src'):
+			print(img) # debug
+			continue
 		if img['src'].startswith('/image'):
 			img['src'] = 'https://www.dw.com' + img['src']
 		if img['src'].startswith('//'):
 			img['src'] = 'https:' + img['src']
-		if 'img-box' in img.parent.get('class'):
+		if 'img-box' in img.parent.get('class', []):
 			img.parent.replace_with(img)
 		if img.parent.name == 'figure' or not img.has_attr('src'):
 			continue
@@ -366,7 +369,7 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
-	'https://cn.nytimes.com/china/20191112/hong-kong-protests-volunteer/?utm_source=tw-nytimeschinese&utm_medium=social&utm_campaign=cur',
+	# 'https://cn.nytimes.com/china/20191112/hong-kong-protests-volunteer/?utm_source=tw-nytimeschinese&utm_medium=social&utm_campaign=cur',
 	# 'https://telegra.ph/%E9%A6%99%E6%B8%AF%E6%8A%97%E8%AE%AE%E8%80%85%E8%83%8C%E5%90%8E%E7%9A%84%E5%BF%97%E6%84%BF%E8%80%85%E5%A4%A7%E5%86%9B-11-16',
 	# 'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
 	# 'https://www.idiva.com/news-opinion/womens-issues/transgender-cabbies-who-are-making-indian-roads-safer-for-women/18004255?fbclid=IwAR3aOtNX0fOukmJ-JNJiImobMfPyVhQ63-i5oEUX38_TRlU4-aBLvHwmaA0',
