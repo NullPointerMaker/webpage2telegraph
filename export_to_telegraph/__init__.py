@@ -426,7 +426,6 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
-	'https://www.baltimoresun.com/entertainment/arts/bs-fe-bma-female-artists-2020-20191115-33s5hjjnqfghzhmwkt7dqbargq-story.html?fbclid=IwAR0dOYRVZvZr_Iow5AsSb6sM4OMtBmRTuIIeSRtHfOgGN5T1-xMbkBslUD0',
 	# 'https://www.telegraph.co.uk/global-health/women-and-girls/dumped-babies-just-tip-iceberg-deadly-consequences-curbing-reproductive/?fbclid=IwAR0uwFvu3QjbhnYyMxfeN2PtlczcgoiWASrEdRsikQ1Y5TTAO6_PpGH2nDk',
 	# 'https://cn.nytimes.com/china/20191112/hong-kong-protests-volunteer/?utm_source=tw-nytimeschinese&utm_medium=social&utm_campaign=cur',
 	# 'https://telegra.ph/%E9%A6%99%E6%B8%AF%E6%8A%97%E8%AE%AE%E8%80%85%E8%83%8C%E5%90%8E%E7%9A%84%E5%BF%97%E6%84%BF%E8%80%85%E5%A4%A7%E5%86%9B-11-16',
