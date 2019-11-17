@@ -280,25 +280,24 @@ def _removeAds(soup):
 				break
 	return soup
 
+def saveSoup(soup, stage):
+	with open("tmp_%d.html" % stage, 'w') as f:
+		f.write(str(soup))
+
 def _findTextFromSoup(soup, url):
-	with open('tmp_0.html', 'w') as f:
-		f.write(str(soup))
-	soup = _getInnerArticle(soup)
-	with open('tmp_a.html', 'w') as f:
-		f.write(str(soup))
-	soup = _cleanupImages(soup, url)
-	with open('tmp_a1.html', 'w') as f:
-		f.write(str(soup))
+	saveSoup(soup, 0)
 	soup = _decomposeOfftopic(soup)
-	with open('tmp_b.html', 'w') as f:
-		f.write(str(soup))
+	saveSoup(soup, 1)
+	soup = _getInnerArticle(soup)
+	saveSoup(soup, 2)
+	soup = _cleanupImages(soup, url)
+	saveSoup(soup, 3)
 	soup = _replaceOfftopicLink(soup)
-	with open('tmp_c.html', 'w') as f:
-		f.write(str(soup))
+	saveSoup(soup, 4)
 	soup = _tagReplace(soup)
-	with open('tmp_d.html', 'w') as f:
-		f.write(str(soup))
+	saveSoup(soup, 5)
 	soup = _removeAds(soup)
+	saveSoup(soup, 6)
 	return soup
 
 def _findText(soup, doc, url):
@@ -426,6 +425,8 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
+	'https://www.huffpost.com/entry/short-hair-girls-gender_n_5dcb0f66e4b098093b024579?ncid=tweetlnkushpmg00000067&utm_campaign=hp_fb_pages&utm_source=women_fb&ncid=fcbklnkushpmg00000046&utm_medium=facebook&fbclid=IwAR1wA2K8hVT9D_nuQ_KkakjKSzuvS14rBrkBBSVsxkTZsmuDFMH2XVP4Kdc',
+	# 'https://mp.weixin.qq.com/s/cJLQFljjbT0NzaiMR801aA',
 	# 'https://www.telegraph.co.uk/global-health/women-and-girls/dumped-babies-just-tip-iceberg-deadly-consequences-curbing-reproductive/?fbclid=IwAR0uwFvu3QjbhnYyMxfeN2PtlczcgoiWASrEdRsikQ1Y5TTAO6_PpGH2nDk',
 	# 'https://cn.nytimes.com/china/20191112/hong-kong-protests-volunteer/?utm_source=tw-nytimeschinese&utm_medium=social&utm_campaign=cur',
 	# 'https://telegra.ph/%E9%A6%99%E6%B8%AF%E6%8A%97%E8%AE%AE%E8%80%85%E8%83%8C%E5%90%8E%E7%9A%84%E5%BF%97%E6%84%BF%E8%80%85%E5%A4%A7%E5%86%9B-11-16',
