@@ -15,15 +15,16 @@ from telegram_util import matchKey
 def fact():
 	return BeautifulSoup("<div></div>", features="lxml")
 
-OFFTOPIC_TAG = ['small', 'h1', 'address', 'meta', 'script', 'noscript']
+OFFTOPIC_TAG = ['small', 'address', 'meta', 'script', 'noscript']
 
 OFFTOPIC_ATT = [
 	'social', 'comment', 'latest', 'widget', 'more', 'button', 'facebook', 
 	'cn-carousel-medium-strip', 'video__end-slate__top-wrapper', 'metadata', 
 	'el__article--embed', 'sidebar', 'signup', 'related', 'disclaimer', 'off-screen', 
 	'story-body__unordered-list', 'story-image-copyright', 'article-header', 
-	'top-wrapper', 'bottom-of-article', 'bottom-wrapper', 'copyright', 'linkList', 
-	'display:none;', 'accordion', 'el-editorial-source', 'video__end-slate__tertiary-title' 
+	'top-wrapper', 'bottom-of-article', 'bottom-wrapper', 'linkList', 
+	'display:none;', 'accordion', 'el-editorial-source', 'video__end-slate__tertiary-title',
+	'adblocker',
 ]
 
 OFFTOPIC_CLASSES = ['ads']
@@ -134,11 +135,13 @@ def _getInnerArticle(soup):
 def _isOffTopic(attrs):
 	if matchKey(attrs, OFFTOPIC_ATT):
 		return True
-	if 'hidden' in attrs and not 'lazy' in attrs:
+	if 'hidden' in attrs and not matchKey(attrs, ['lazy', 'false']):
+		return True
+	if 'copyright' in attrs and not 'and' in attrs:
 		return True
 	return False
 
-def _decomposeOfftopic(soup):
+def _decomposeOfftopic(soup, url):
 	for item in soup.find_all():
 		if _isOffTopic(str(item.attrs)) or \
 			item.name in OFFTOPIC_TAG:
@@ -157,18 +160,37 @@ def _decomposeOfftopic(soup):
 		if p:
 			wrapper.append(p)
 		item.replace_with(wrapper)
+
+	if not matchKey(url, ['medium']):
+		for item in soup.find_all('h1'):
+			item.decompose()
 	return soup
 
 def _replaceOfftopicLink(soup):
 	for link in soup.find_all("a"):
-		if not matchKey(link.text, ['英文版']):
-			if link.text and link.text.strip():
-				link.replace_with(link.text)
-			elif link.find('img'):
-				link.replace_with(link.find('img'))
+		if matchKey(link.text, ['英文版']):
+			continue
+		if link.find('figure'):
+			link.replace_with(link.find('figure'))
+			continue
+		if link.text and link.text.strip():
+			link.replace_with(link.text)
 	return soup
 
-def _getFullUrl(raw, domain):
+def _formatImgUrl(raw, domain):
+	parts = raw.split('/')
+	success = False
+	for index, part in enumerate(parts):
+		if part == 'max':
+			try:
+				if int(parts[index + 1]) > 0:
+					success = True
+					break
+			except:
+				pass
+	if success:
+		parts[index + 1] = '690'
+	raw = '/'.join(parts)
 	if raw.startswith('//'):
 		return 'https:' + raw
 	if raw.startswith('/'):
@@ -181,7 +203,7 @@ def _getImgInsideFigure(figure, domain):
 	for raw_img in figure.find_all():
 		for attrs in IMG_ATTRS:
 			if raw_img.get(attrs):
-				r = fact().new_tag("img", src = _getFullUrl(raw_img[attrs], domain))
+				r = fact().new_tag("img", src = _formatImgUrl(raw_img[attrs], domain))
 				if raw_img.get('title'):
 					r['title'] = raw_img.get('title')
 				return r
@@ -203,6 +225,8 @@ def _cleanupFigure(figure, domain):
 	return new_figure
 
 def _parseDomain(url):
+	if not url:
+		return 
 	if not url.startswith('http'):
 		return
 	r = '/'.join(url.split('/')[:3])
@@ -213,7 +237,14 @@ def _findDomain(soup, url):
 	for meta in soup.find_all('meta'):
 		for att in meta.attrs:
 			if 'url' in att.lower():
+				print(meta)
 				r = _parseDomain(meta[att])
+				if r:
+					return r
+				r = _parseDomain(_findRawContent(meta))
+				if r:
+					return r
+				print('here')
 	return _parseDomain(url)
 
 def _getCaption(item):
@@ -223,25 +254,27 @@ def _getCaption(item):
 			caption.append(x)
 			return caption
 
-def _cleanupImages(soup, url):
-	domain = _findDomain(soup, url)
+def _copyB(soup):
+	return BeautifulSoup(str(soup), features="lxml")
+
+def _cleanupImages(soup, domain):
 	for figure in soup.find_all('figure'):
 		r = _cleanupFigure(figure, domain)
 		if r: 
 			figure.replace_with(r)
 	for img in soup.find_all('img'):
-		if img.parent.name != 'figure':
-			to_replace = img
-			caption = _getCaption(img.parent)
-			figure = fact().new_tag("figure")
-			figure.append(BeautifulSoup(str(img), features="lxml"))
-			if caption:
-				to_replace = img.parent
-				figure.append(caption)
-
-			r = _cleanupFigure(figure, domain)
-			if r:
-				to_replace.replace_with(r)
+		if not img.parent:
+			continue
+		if img.parent.name == 'figure':
+			continue
+		caption = _getCaption(img.parent)
+		figure = fact().new_tag("figure")
+		figure.append(_copyB(img))
+		if caption:
+			figure.append(_copyB(caption))
+			caption.decompose()
+		r = _cleanupFigure(figure, domain)
+		img.replace_with(_copyB(r))
 	return soup
 		
 
@@ -285,12 +318,13 @@ def saveSoup(soup, stage):
 		f.write(str(soup))
 
 def _findTextFromSoup(soup, url):
+	domain = _findDomain(soup, url)
 	saveSoup(soup, 0)
-	soup = _decomposeOfftopic(soup)
+	soup = _decomposeOfftopic(soup, url)
 	saveSoup(soup, 1)
-	soup = _getInnerArticle(soup)
+	soup = _cleanupImages(soup, domain)
 	saveSoup(soup, 2)
-	soup = _cleanupImages(soup, url)
+	soup = _getInnerArticle(soup)
 	saveSoup(soup, 3)
 	soup = _replaceOfftopicLink(soup)
 	saveSoup(soup, 4)
@@ -413,6 +447,8 @@ def export(url, throw_exception=False, force=False):
 	try:
 		p = _getPoster()
 		article = getArticle(url, throw_exception)
+		if not article.text or not article.text.text:
+			article.text = 'TO BE ADDED'
 		r = p.post(
 			title = article.title, 
 			author = article.author, 
@@ -425,21 +461,21 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
-	'https://gen.medium.com/everyones-missing-the-obvious-when-it-comes-to-the-declining-u-s-birth-rate-679abebb854b',
+	'https://t.co/k2kLBpdQhl',
+	# 'https://t.co/4ik2VsUHeB',
+	# 'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html',
+	# 'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
+	# 'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
+	# 'https://gen.medium.com/everyones-missing-the-obvious-when-it-comes-to-the-declining-u-s-birth-rate-679abebb854b',
 	# 'https://mp.weixin.qq.com/s/cJLQFljjbT0NzaiMR801aA',
 	# 'https://www.telegraph.co.uk/global-health/women-and-girls/dumped-babies-just-tip-iceberg-deadly-consequences-curbing-reproductive/?fbclid=IwAR0uwFvu3QjbhnYyMxfeN2PtlczcgoiWASrEdRsikQ1Y5TTAO6_PpGH2nDk',
 	# 'https://cn.nytimes.com/china/20191112/hong-kong-protests-volunteer/?utm_source=tw-nytimeschinese&utm_medium=social&utm_campaign=cur',
 	# 'https://telegra.ph/%E9%A6%99%E6%B8%AF%E6%8A%97%E8%AE%AE%E8%80%85%E8%83%8C%E5%90%8E%E7%9A%84%E5%BF%97%E6%84%BF%E8%80%85%E5%A4%A7%E5%86%9B-11-16',
-	# 'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
 	# 'https://www.idiva.com/news-opinion/womens-issues/transgender-cabbies-who-are-making-indian-roads-safer-for-women/18004255?fbclid=IwAR3aOtNX0fOukmJ-JNJiImobMfPyVhQ63-i5oEUX38_TRlU4-aBLvHwmaA0',
 	# 'https://www.eurekalert.org/pub_releases/2019-11/lu-ada111519.php',
-	# 'https://www.nytimes.com/2019/10/10/opinion/sunday/feminism-lean-in.html',
 	# 'bbc.in/2W2Gohc',
 	# 'https://t.co/Joty1jyQwt',
-	# 'https://t.co/k2kLBpdQhl',
-	# 'https://t.co/4ik2VsUHeB',
 	# 'https://www.dw.com/zh/%E6%91%A9%E6%A0%B9%E5%A4%A7%E9%80%9A%E4%B8%80%E5%A4%A7%E9%99%86%E7%B1%8D%E5%91%98%E5%B7%A5%E5%9C%A8%E9%A6%99%E6%B8%AF%E9%81%AD%E6%9A%B4%E6%89%93/a-50723184',
-	# 'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html',
 ]
 
 def _test():
@@ -447,6 +483,6 @@ def _test():
 		print('原文：', url)
 		r = export(url, True, True)
 		print('导出：', r)
-		print('\n\n')
+		print('')
 
 _test()
