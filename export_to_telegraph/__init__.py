@@ -340,6 +340,9 @@ def _finalTouch(soup, url):
 		for item in soup.find_all('h2'):
 			item.parent.parent.insert(0, _copyB(item))
 			item.decompose()
+	for item in soup.find_all():
+		if item.text == 'Follow  and !':
+			item.decompose()
 	return soup
 
 def saveSoup(soup, stage):
@@ -436,12 +439,13 @@ def _findUrl(soup):
 def _getArticle(url):
 	r = requests.get(url)
 	soup = BeautifulSoup(_trimWebpage(r.text), 'html.parser')
+	article_url = _findUrl(soup)
 	doc = Document(r.text)
 	return _Article(
 		_findTitle(soup, doc), 
 		_findAuthor(soup), 
 		_findText(soup, doc, url), 
-		_findUrl(soup))
+		article_url)
 
 def _trimUrl(url):
 	if not '://' in url:
@@ -485,7 +489,6 @@ def export(url, throw_exception=False, force=False):
 				author_url = _formaturl(article.url or url), 
 				text = str(article.text)[:80000])
 		except Exception as e:
-			print(str(e))
 			if 'CONTENT_TEXT_REQUIRED' in str(e):
 				r = p.post(
 					title = article.title, 
@@ -501,6 +504,7 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
+	'http://telegra.ph/This-Photographer-Is-Empowering-Trans-Youth-Through-Art-11-17-40',
 	# 'https://www.pride.com/holidays/2018/12/21/7-tips-surviving-holidays-lgbtq-person?utm_source=facebook&utm_medium=social&utm_campaign=holidays&fbclid=IwAR3VT99kqe3S8R8hR6j4qEVVxjBGTMILc0MeuHH2oQFN5hg1LFmdAddfdVU#media-gallery-media-7',
 	# 'https://www.pride.com/art/2018/5/10/photographer-empowering-trans-youth-through-art?fbclid=IwAR1WM82jyIovZRmLQwgJtBTExGGy-_py6SnOirDb2_IEjEAxxzqyKCjqLxY#media-gallery-media-3',
 	# 'https://www.telegraph.co.uk/global-health/women-and-girls/dumped-babies-just-tip-iceberg-deadly-consequences-curbing-reproductive/?fbclid=IwAR0uwFvu3QjbhnYyMxfeN2PtlczcgoiWASrEdRsikQ1Y5TTAO6_PpGH2nDk',
