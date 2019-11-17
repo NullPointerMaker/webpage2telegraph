@@ -22,7 +22,7 @@ OFFTOPIC_TAG = ['small', 'address', 'meta', 'script', 'noscript']
 OFFTOPIC_ATT = [
 	'social', 'comment', 'latest', 'widget', 'more', 'button', 'facebook', 
 	'cn-carousel-medium-strip', 'video__end-slate__top-wrapper', 'metadata', 
-	'el__article--embed', 'sidebar', 'signup', 'related', 'disclaimer', 'off-screen', 
+	'el__article--embed', 'signup', 'related', 'disclaimer', 'off-screen', 
 	'story-body__unordered-list', 'story-image-copyright', 'article-header', 
 	'top-wrapper', 'bottom-of-article', 'bottom-wrapper', 'linkList', 
 	'display:none;', 'accordion', 'el-editorial-source', 'video__end-slate__tertiary-title',
@@ -137,7 +137,9 @@ def _getInnerArticle(soup):
 def _isOffTopic(attrs):
 	if matchKey(attrs, OFFTOPIC_ATT):
 		return True
-	if 'hidden' in attrs and not matchKey(attrs, ['lazy', 'false']):
+	if 'sidebar' in attrs and not matchKey(attrs, ['no-sidebar']):
+		return True
+	if 'hidden' in attrs and not matchKey(attrs, ['lazy', 'false', 'label-hidden']):
 		return True
 	if 'copyright' in attrs and not 'and' in attrs:
 		return True
@@ -147,6 +149,8 @@ def _decomposeOfftopic(soup, url):
 	for item in soup.find_all():
 		if _isOffTopic(str(item.attrs)) or \
 			item.name in OFFTOPIC_TAG:
+			if len(str(item)) > 1000:
+				print(item.attrs)
 			item.decompose()
 
 	for c in OFFTOPIC_CLASSES:
@@ -467,13 +471,24 @@ def export(url, throw_exception=False, force=False):
 	try:
 		p = _getPoster()
 		article = getArticle(url, throw_exception)
-		if not article.text or not article.text.text:
-			article.text = 'TO BE ADDED'
-		r = p.post(
-			title = article.title, 
-			author = article.author, 
-			author_url = _formaturl(article.url or url), 
-			text = str(article.text)[:80000])
+		if not article.text or not article.text.text.strip():
+			article.text = '<div>TO BE ADDED</div>'
+		try:
+			r = p.post(
+				title = article.title, 
+				author = article.author, 
+				author_url = _formaturl(article.url or url), 
+				text = str(article.text)[:80000])
+		except Exception as e:
+			print(str(e))
+			if 'CONTENT_TEXT_REQUIRED' in str(e):
+				r = p.post(
+					title = article.title, 
+					author = article.author, 
+					author_url = _formaturl(article.url or url), 
+					text = '<div>TO BE ADDED</div>')
+			else:
+				raise e
 		if force or isConfident(url, article.text):
 			return _trimUrl(r['url'])
 	except Exception as e:
@@ -481,6 +496,7 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
+	'https://www.pride.com/art/2018/5/10/photographer-empowering-trans-youth-through-art?fbclid=IwAR1WM82jyIovZRmLQwgJtBTExGGy-_py6SnOirDb2_IEjEAxxzqyKCjqLxY#media-gallery-media-3',
 	# 'https://www.telegraph.co.uk/global-health/women-and-girls/dumped-babies-just-tip-iceberg-deadly-consequences-curbing-reproductive/?fbclid=IwAR0uwFvu3QjbhnYyMxfeN2PtlczcgoiWASrEdRsikQ1Y5TTAO6_PpGH2nDk',
 	# 'https://www.businessinsider.com/trump-other-advertisers-spending-most-on-facebook-political-ads-2019-11?fbclid=IwAR0xfLbdGxBDEBL_WhLQWl8BIUXqEGaw8SP7x6DWSXExClF4x98ZG_w5YCY',
 	# 'https://t.co/k2kLBpdQhl',
