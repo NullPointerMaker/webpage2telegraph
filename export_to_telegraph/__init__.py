@@ -425,7 +425,7 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
-	'https://www.huffpost.com/entry/short-hair-girls-gender_n_5dcb0f66e4b098093b024579?ncid=tweetlnkushpmg00000067&utm_campaign=hp_fb_pages&utm_source=women_fb&ncid=fcbklnkushpmg00000046&utm_medium=facebook&fbclid=IwAR1wA2K8hVT9D_nuQ_KkakjKSzuvS14rBrkBBSVsxkTZsmuDFMH2XVP4Kdc',
+	'https://gen.medium.com/everyones-missing-the-obvious-when-it-comes-to-the-declining-u-s-birth-rate-679abebb854b',
 	# 'https://mp.weixin.qq.com/s/cJLQFljjbT0NzaiMR801aA',
 	# 'https://www.telegraph.co.uk/global-health/women-and-girls/dumped-babies-just-tip-iceberg-deadly-consequences-curbing-reproductive/?fbclid=IwAR0uwFvu3QjbhnYyMxfeN2PtlczcgoiWASrEdRsikQ1Y5TTAO6_PpGH2nDk',
 	# 'https://cn.nytimes.com/china/20191112/hong-kong-protests-volunteer/?utm_source=tw-nytimeschinese&utm_medium=social&utm_campaign=cur',
