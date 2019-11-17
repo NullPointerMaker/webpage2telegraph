@@ -241,10 +241,11 @@ def _findDomain(soup, url):
 				r = _parseDomain(meta[att])
 				if r:
 					return r
-				r = _parseDomain(_findRawContent(meta))
-				if r:
-					return r
-				print('here')
+	for meta in soup.find_all('meta'):
+		if 'url' in str(meta).lower():
+			r = _parseDomain(_findRawContent(meta))
+			if r:
+				return r
 	return _parseDomain(url)
 
 def _getCaption(item):
