@@ -462,7 +462,7 @@ def export(url, throw_exception=False, force=False):
 			raise e
 
 urls = [
-	'https://t.co/k2kLBpdQhl',
+	# 'https://t.co/k2kLBpdQhl',
 	# 'https://t.co/4ik2VsUHeB',
 	# 'https://edition.cnn.com/2019/11/11/asia/mouse-deer-vietnam-chevrotain-rediscovered-scn/index.html',
 	# 'https://www.pinknews.co.uk/2019/11/14/same-sex-marriage-in-sweden-and-denmark-has-reduced-the-number-of-lesbians-and-gay-men-dying-by-suicide-by-almost-half/?fbclid=IwAR2Rq8aPs7lACGJOmC_N549Px9QvZAYGeCjd8_Z-i5owBlLKbtX7UyGm4l8',
