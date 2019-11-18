@@ -32,6 +32,8 @@ def _test():
 		mode = sys.argv[1]
 	else:
 		mode = ''
+	if mode == 'open':
+		mode = ''
 	for url in urls:
 		if not mode in url:
 			continue

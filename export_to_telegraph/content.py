@@ -10,7 +10,7 @@ from tag_replace import _tagReplace
 from final_touch import _finalTouch
 from link import _replaceOfftopicLink
 from offtopic import _decomposeOfftopic
-from innter_article import _getInnerArticle
+from inner_article import _getInnerArticle
 
 def saveSoup(soup, stage):
 	if 'debug' in str(sys.argv):

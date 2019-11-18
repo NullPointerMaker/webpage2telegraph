@@ -39,7 +39,7 @@ P_AD_WORDS = [
 	'Follow The New York Times',
 ]
 
-def _decompseAds(soup)
+def _decompseAds(soup):
 	for item in soup.find_all("div", class_="article-paragraph"):
 		if matchKey(item.text, DIV_AD_WORDS):
 			item.decompose()
