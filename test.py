@@ -6,6 +6,7 @@ import os
 import sys
 
 urls = [
+	'https://telegra.ph/Domestic-abusers-and-stalkers-should-sign-national-register-like-sex-offenders-commons-report-says-11-18',
 	'https://ca.news.yahoo.com/chilliwack-rainbow-crosswalk-pride-232847603.html',
 	'http://telegra.ph/This-Photographer-Is-Empowering-Trans-Youth-Through-Art-11-17-40',
 	'https://www.pride.com/holidays/2018/12/21/7-tips-surviving-holidays-lgbtq-person?utm_source=facebook&utm_medium=social&utm_campaign=holidays&fbclid=IwAR3VT99kqe3S8R8hR6j4qEVVxjBGTMILc0MeuHH2oQFN5hg1LFmdAddfdVU#media-gallery-media-7',
