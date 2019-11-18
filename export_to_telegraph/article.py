@@ -1,9 +1,14 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import requests
 from bs4 import BeautifulSoup
 from readability import Document
 from title import _findTitle
 from author import _findAuthor
 from content import _findMain
+import hashlib
+import sys
 
 class _Article(object):
 	def __init__(self, title, author, text, url = None):
@@ -27,10 +32,19 @@ def _trimWebpage(raw):
 	return raw
 
 def _getArticle(url):
-	r = requests.get(url)
-	soup = BeautifulSoup(_trimWebpage(r.text), 'html.parser')
+	cache = 'tmp_' + hashlib.sha224(url.encode('utf-8')).hexdigest()[:10] + '.html'
+	if 'debug' in str(sys.argv):
+		print(cache)
+	try:
+		with open(cache) as f:
+			content = f.read()
+	except:
+		content = requests.get(url).text
+		with open(cache, 'w') as f:
+			f.write(content)
+	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
 	article_url = _findUrl(soup)
-	doc = Document(r.text)
+	doc = Document(content)
 	return _Article(
 		_findTitle(soup, doc), 
 		_findAuthor(soup), 
