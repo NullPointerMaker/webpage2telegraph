@@ -19,17 +19,6 @@ OFFTOPIC_ATT = [
 
 OFFTOPIC_CLASSES = ['ads']
 
-def _isOffTopic(attrs):
-	if matchKey(attrs, OFFTOPIC_ATT):
-		return True
-	if 'sidebar' in attrs and not matchKey(attrs, ['no-sidebar']):
-		return True
-	if 'hidden' in attrs and not matchKey(attrs, ['lazy', 'false', 'label-hidden']):
-		return True
-	if 'copyright' in attrs and not 'and' in attrs:
-		return True
-	return False
-
 DIV_AD_WORDS = [
 	'《纽约时报》推出每日中文简报',
 	'订阅《纽约时报》中文简报',
@@ -38,7 +27,27 @@ DIV_AD_WORDS = [
 P_AD_WORDS = [
 	'The Times is committed', 
 	'Follow The New York Times',
+	'Love HuffPost',
 ]
+
+def _isOffTopic(attrs):
+	if not attrs:
+		return False
+	r = []
+	for k, v in attrs.items():
+		if matchKey(k, ['href', 'src', 'url', 'alt']):
+			continue
+		r.append(str(k) + ' : ' + str(v))
+	r = '\n'.join(r)
+	if matchKey(r, OFFTOPIC_ATT):
+		return True
+	if 'sidebar' in r and not matchKey(r, ['no-sidebar']):
+		return True
+	if 'hidden' in r and not matchKey(r, ['lazy', 'false', 'label-hidden']):
+		return True
+	if 'copyright' in r and not 'and' in r:
+		return True
+	return False
 
 def _decompseAds(soup):
 	for item in soup.find_all("div", class_="article-paragraph"):
@@ -50,7 +59,7 @@ def _decompseAds(soup):
 
 def _decomposeOfftopic(soup, url):
 	for item in soup.find_all():
-		if _isOffTopic(str(item.attrs)) or \
+		if _isOffTopic(item.attrs) or \
 			item.name in OFFTOPIC_TAG:
 			item.decompose()
 
