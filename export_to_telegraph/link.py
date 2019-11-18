@@ -8,7 +8,7 @@ def _replaceOfftopicLink(soup):
 	for link in soup.find_all("a"):
 		if matchKey(link.text, ['英文版']):
 			continue
-		img = _yieldPossibleImg(link).next()
+		img = next(_yieldPossibleImg(link), None)
 		if img:
 			link.replace_with(img)
 			continue

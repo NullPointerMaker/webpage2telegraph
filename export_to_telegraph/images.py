@@ -8,9 +8,9 @@ def _getCaption(item):
 	if not item:
 		return
 	for x in item.find_all():
-		if 'caption' in str(x).lower():
+		if 'caption' in str(x.attrs).lower():,
 			caption = fact().new_tag("figcaption")
-			caption.append(x)
+			caption.append(_copyB(x))
 			return caption
 
 def _formatImgUrl(raw, domain):
@@ -85,7 +85,6 @@ def _yieldPossibleImg(soup):
 			yield x
 
 def _cleanupImages(soup, domain):
-
 	for img in soup.find_all("div", class_="js-delayed-image-load"):
 		img.name = 'img'
 	
@@ -115,7 +114,7 @@ def _cleanupImages(soup, domain):
 		figure.append(_copyB(img))
 		
 		if caption:
-			figure.append(caption)
+			figure.append(_copyB(caption))
 			caption.decompose()
 		r = _cleanupFigure(figure, domain)
 		if r: 

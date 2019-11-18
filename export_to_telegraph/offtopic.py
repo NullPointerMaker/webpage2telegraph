@@ -67,11 +67,25 @@ def _decomposeOfftopic(soup, url):
 	for item in soup.find_all("header"):
 		wrapper = fact().new_tag("p")
 		s = item.find("p", {"id": "article-summary"})
-		img = _yieldPossibleImg(item).next()
+		img = next(_yieldPossibleImg(item), None)
 		if img:
 			wrapper.append(img)
 		if s:
-			wrapper.append(s)
+			if not img:
+				item.replace_with(s)
+				return
+			x = fact().new_tag("figcaption")
+			x.append(s)
+			if img.name in ['div', 'figure']:
+				cap = img.find('figcaption')
+				if cap and not cap.text:
+					cap.replace_with(x)
+				elif not cap:
+					img.append(x)
+				else:
+					wrapper.append(s)	
+			else:
+				wrapper.append(x)
 		item.replace_with(wrapper)
 	
 	return soup
