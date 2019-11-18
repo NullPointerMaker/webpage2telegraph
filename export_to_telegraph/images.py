@@ -8,7 +8,7 @@ def _getCaption(item):
 	if not item:
 		return
 	for x in item.find_all():
-		if 'caption' in str(x.attrs).lower():,
+		if 'caption' in str(x.attrs).lower():
 			caption = fact().new_tag("figcaption")
 			caption.append(_copyB(x))
 			return caption
