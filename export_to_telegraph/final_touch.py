@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from common import _copyB
+from .common import _copyB
 from bs4 import BeautifulSoup
 
 def _finalTouch(soup, url):

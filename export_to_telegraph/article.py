@@ -4,9 +4,9 @@
 import requests
 from bs4 import BeautifulSoup
 from readability import Document
-from title import _findTitle
-from author import _findAuthor
-from content import _findMain
+from .title import _findTitle
+from .author import _findAuthor
+from .content import _findMain
 import hashlib
 import sys
 

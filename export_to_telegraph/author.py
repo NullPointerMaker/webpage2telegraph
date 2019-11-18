@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from common import _findRawContent
+from .common import _findRawContent
 from telegram_util import matchKey
 
 def _yieldPossibleAuthorItem(soup):

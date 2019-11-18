@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from __init__ import export, _formaturl
+from export_to_telegraph import export, _formaturl
 import os
 import sys
 

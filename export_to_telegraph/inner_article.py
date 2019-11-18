@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from common import _seemsValidText
+from .common import _seemsValidText
 
 def _seemsValidRawArticle(soup):
 	if not _seemsValidText(soup):

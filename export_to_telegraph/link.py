@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from telegram_util import matchKey
-from images import _yieldPossibleImg
+from .images import _yieldPossibleImg
 
 def _replaceOfftopicLink(soup):
 	for link in soup.find_all("a"):

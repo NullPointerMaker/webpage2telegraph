@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from telegram_util import matchKey
-from common import fact
-from images import _yieldPossibleImg
+from .common import fact
+from .images import _yieldPossibleImg
 
 OFFTOPIC_TAG = ['small', 'address', 'meta', 'script']
 

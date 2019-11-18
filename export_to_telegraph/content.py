@@ -2,14 +2,14 @@
 # -*- coding: utf-8 -*-
 
 from bs4 import BeautifulSoup
-from common import _findRawContent
-from domain import _findDomain
-from final_touch import _finalTouch, _moveHeadPhoto
-from images import _cleanupImages
-from inner_article import _getInnerArticle
-from link import _replaceOfftopicLink
-from offtopic import _decomposeOfftopic
-from tag_replace import _tagReplace
+from .common import _findRawContent
+from .domain import _findDomain
+from .final_touch import _finalTouch, _moveHeadPhoto
+from .images import _cleanupImages
+from .inner_article import _getInnerArticle
+from .link import _replaceOfftopicLink
+from .offtopic import _decomposeOfftopic
+from .tag_replace import _tagReplace
 from telegram_util import matchKey
 import sys
 

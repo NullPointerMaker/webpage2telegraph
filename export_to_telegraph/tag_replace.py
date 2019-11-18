@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from common import _copyB, fact
+from .common import _copyB, fact
 
 def _tagReplace(soup):
 	wrap_with_p = [

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from common import fact, _copyB
+from .common import fact, _copyB
 
 def _getCaption(item):
 	if not item:
