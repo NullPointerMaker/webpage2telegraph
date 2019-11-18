@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from commom import _copyB
+from common import _copyB
 
 def _finalTouch(soup, url):
 	for item in soup.find_all("footer", class_="author-info"):

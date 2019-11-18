@@ -3,8 +3,9 @@
 
 from telegram_util import matchKey
 from common import fact
+from images import _yieldPossibleImg
 
-OFFTOPIC_TAG = ['small', 'address', 'meta', 'script', 'noscript']
+OFFTOPIC_TAG = ['small', 'address', 'meta', 'script']
 
 OFFTOPIC_ATT = [
 	'social', 'comment', 'latest', 'widget', 'more', 'button', 'facebook', 
@@ -63,16 +64,14 @@ def _decomposeOfftopic(soup, url):
 
 	_decompseAds(soup)
 
-	# for item in soup.find_all("header"):
-	# 	wrapper = fact().new_tag("p")
-	# 	s = item.find("p", {"id": "article-summary"})
-	# 	if s:
-	# 		wrapper.append(s)
-	# 	p = item.find("div", {"data-testid": "photoviewer-wrapper"})
-	# 	if p:
-	# 		wrapper.append(p)
-	# 	with open('tmp_headers.html', 'a') as f:
-	# 		f.write(str(item))
-	# 	item.replace_with(wrapper)
+	for item in soup.find_all("header"):
+		wrapper = fact().new_tag("p")
+		s = item.find("p", {"id": "article-summary"})
+		img = _yieldPossibleImg(item).next()
+		if img:
+			wrapper.append(img)
+		if s:
+			wrapper.append(s)
+		item.replace_with(wrapper)
 	
 	return soup

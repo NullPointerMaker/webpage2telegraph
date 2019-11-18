@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from common import _findRawContent
 from bs4 import BeautifulSoup
-from telegram_util import matchKey
-import sys
-from images import _cleanupImages
-from tag_replace import _tagReplace
+from common import _findRawContent
+from domain import _findDomain
 from final_touch import _finalTouch
+from images import _cleanupImages
+from inner_article import _getInnerArticle
 from link import _replaceOfftopicLink
 from offtopic import _decomposeOfftopic
-from inner_article import _getInnerArticle
+from tag_replace import _tagReplace
+from telegram_util import matchKey
+import sys
 
 def saveSoup(soup, stage):
 	if 'debug' in str(sys.argv):
@@ -18,12 +19,13 @@ def saveSoup(soup, stage):
 			f.write(str(soup))
 
 def _findMainFromSoup(soup, url):
+	domain = _findDomain(soup, url)
 	saveSoup(soup, 0)
 	soup = _replaceOfftopicLink(soup)
 	saveSoup(soup, 1)
 	soup = _decomposeOfftopic(soup, url)
 	saveSoup(soup, 2)
-	soup = _cleanupImages(soup, url)
+	soup = _cleanupImages(soup, domain)
 	saveSoup(soup, 3)
 	soup = _getInnerArticle(soup)
 	saveSoup(soup, 4)

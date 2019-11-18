@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import re
-from common import _findRawContent, fact, _copyB
+from common import fact, _copyB
 
 def _getCaption(item):
 	if not item:
@@ -63,29 +63,6 @@ def _cleanupFigure(figure, domain):
 		cite.decompose()
 	return new_figure
 
-def _parseDomain(url):
-	if not url:
-		return 
-	if not url.startswith('http'):
-		return
-	r = '/'.join(url.split('/')[:3])
-	if r.count('/') == 2 and 'http' in r:
-		return r
-
-def _findDomain(soup, url):
-	for meta in soup.find_all('meta'):
-		for att in meta.attrs:
-			if 'url' in att.lower():
-				r = _parseDomain(meta[att])
-				if r:
-					return r
-	for meta in soup.find_all('meta'):
-		if 'url' in str(meta).lower():
-			r = _parseDomain(_findRawContent(meta))
-			if r:
-				return r
-	return _parseDomain(url)
-
 def _findnoscriptImg(img):
 	if not img.parent or len(str(img.parent)) > 1000 or \
 		len(list(img.parent.find_all('img'))) > 2:
@@ -97,8 +74,17 @@ def _findnoscriptImg(img):
 		return
 	return noscript.find('img')
 
-def _cleanupImages(soup, url):
-	domain = _findDomain(soup, url)
+def _yieldPossibleImg(soup):
+	possibles = [
+		soup.find_all("div", class_="js-delayed-image-load"),
+		soup.find_all("figure"),
+		soup.find_all("img"),
+	]
+	for l in possibles:
+		for x in l:
+			yield x
+
+def _cleanupImages(soup, domain):
 
 	for img in soup.find_all("div", class_="js-delayed-image-load"):
 		img.name = 'img'
