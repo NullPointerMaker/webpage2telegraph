@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from telegram_util import matchKey
-from .common import fact
+from .common import fact, _wrap
 from .images import _yieldPossibleImg
 
 OFFTOPIC_TAG = ['small', 'address', 'meta', 'script']
@@ -65,25 +65,25 @@ def _decomposeOfftopic(soup, url):
 	_decompseAds(soup)
 
 	for item in soup.find_all("header"):
-		wrapper = fact().new_tag("p")
 		s = item.find("p", {"id": "article-summary"})
 		img = next(_yieldPossibleImg(item), None)
-		if s:
-			if not img:
-				item.replace_with(s)
-				return
-			x = fact().new_tag("figcaption")
-			x.append(s)
-			if img.name in ['div', 'figure']:
-				cap = img.find('figcaption')
-				if cap and not cap.text:
-					cap.replace_with(x)
-				elif not cap:
-					img.append(x)
-				else:
-					wrapper.append(s)	
+		if not s or not s.text:
+			if img:
+				item.replace_with(img)
 			else:
-				wrapper.append(x)
-		item.replace_with(wrapper)
-	
+				item.decompose()
+			continue
+		if not img:
+			item.replace_with(s)
+			continue
+		cap = img.find('figcaption')
+		if cap and not cap.text:
+			cap.replace_with(_wrap('figcaption', s.text))
+			item.replace_with(img)
+			continue
+		if not cap and img.name in ['div', 'figure']:
+			img.append(_wrap('figcaption', s.text))
+			item.replace_with(img)
+			continue
+		item.replace_with(_wrap('p', img, s))
 	return soup

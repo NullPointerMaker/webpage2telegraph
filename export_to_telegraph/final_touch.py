@@ -15,7 +15,7 @@ def _finalTouch(soup, url):
 			item.parent.parent.insert(0, _copyB(item))
 			item.decompose()
 	for item in soup.find_all():
-		if item.text == 'Follow  and !':
+		if item.text == 'Follow TranscendingSelf and support their Fundraiser!':
 			item.decompose()
 	return soup
 
@@ -25,7 +25,6 @@ def _moveHeadPhoto(soup):
 		return
 	html = str(soup)
 	pre_content = BeautifulSoup(html[:html.find('<figure')], features="lxml")
-	print(len(pre_content.text))
 	if len(pre_content.text) > 200:
 		return
 	soup.insert(0, _copyB(figure))

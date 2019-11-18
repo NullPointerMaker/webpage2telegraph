@@ -20,3 +20,9 @@ def _seemsValidText(soup):
 	if not soup:
 		return False
 	return soup.text and len(soup.text) > 500
+
+def _wrap(name, *children):
+	r = fact().new_tag(name)
+	for child in children:
+		r.append(child)
+	return r

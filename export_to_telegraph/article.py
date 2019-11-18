@@ -33,8 +33,6 @@ def _trimWebpage(raw):
 
 def _getArticle(url):
 	cache = 'tmp_' + hashlib.sha224(url.encode('utf-8')).hexdigest()[:10] + '.html'
-	if 'debug' in str(sys.argv):
-		print(cache)
 	try:
 		with open(cache) as f:
 			content = f.read()

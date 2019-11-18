@@ -5,8 +5,8 @@ name = 'export_to_telegraph'
 token = ''
 
 from html_telegraph_poster import TelegraphPoster
-from article import _getArticle
-from common import _seemsValidText
+from .article import _getArticle
+from .common import _seemsValidText
 
 def _getPoster():
 	global token
