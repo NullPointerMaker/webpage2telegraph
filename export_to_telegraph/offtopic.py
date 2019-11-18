@@ -43,7 +43,6 @@ def _decompseAds(soup)
 	for item in soup.find_all("div", class_="article-paragraph"):
 		if matchKey(item.text, DIV_AD_WORDS):
 			item.decompose()
-			continue
 	for item in soup.find_all("p"):
 		if matchKey(item.text, P_AD_WORDS) or item.text in ['广告']:
 			item.decompose()
