@@ -4,7 +4,7 @@
 from bs4 import BeautifulSoup
 from common import _findRawContent
 from domain import _findDomain
-from final_touch import _finalTouch
+from final_touch import _finalTouch, _moveHeadPhoto
 from images import _cleanupImages
 from inner_article import _getInnerArticle
 from link import _replaceOfftopicLink
@@ -33,6 +33,8 @@ def _findMainFromSoup(soup, url):
 	saveSoup(soup, 5)
 	soup = _finalTouch(soup, url)
 	saveSoup(soup, 6)
+	_moveHeadPhoto(soup)
+	saveSoup(soup, 7)
 	return soup
 
 def _findMain(soup, doc, url):

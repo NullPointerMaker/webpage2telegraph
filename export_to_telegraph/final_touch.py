@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from common import _copyB
+from bs4 import BeautifulSoup
 
 def _finalTouch(soup, url):
 	for item in soup.find_all("footer", class_="author-info"):
@@ -17,3 +18,17 @@ def _finalTouch(soup, url):
 		if item.text == 'Follow  and !':
 			item.decompose()
 	return soup
+
+def _moveHeadPhoto(soup):
+	figure = soup.find('figure')
+	if not figure:
+		return
+	html = str(soup)
+	pre_content = BeautifulSoup(html[:html.find('<figure')], features="lxml")
+	print(len(pre_content.text))
+	if len(pre_content.text) > 200:
+		return
+	soup.insert(0, _copyB(figure))
+	figure.decompose()
+
+

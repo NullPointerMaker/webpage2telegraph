@@ -68,8 +68,6 @@ def _decomposeOfftopic(soup, url):
 		wrapper = fact().new_tag("p")
 		s = item.find("p", {"id": "article-summary"})
 		img = next(_yieldPossibleImg(item), None)
-		if img:
-			wrapper.append(img)
 		if s:
 			if not img:
 				item.replace_with(s)
