@@ -22,7 +22,7 @@ setuptools.setup(
         'html_telegraph_poster',
         'bs4',
         'readability-lxml',
-        'telegram_util>=0.0.10'
+        'telegram_util>=0.0.20'
     ],
     python_requires='>=3.0',
 )

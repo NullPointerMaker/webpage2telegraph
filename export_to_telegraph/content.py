@@ -27,13 +27,13 @@ def _findMainFromSoup(soup, url):
 	saveSoup(soup, 2)
 	soup = _cleanupImages(soup, domain)
 	saveSoup(soup, 3)
-	soup = _getInnerArticle(soup)
+	soup, before_content = _getInnerArticle(soup)
 	saveSoup(soup, 4)
 	soup = _tagReplace(soup)
 	saveSoup(soup, 5)
 	soup = _finalTouch(soup, url)
 	saveSoup(soup, 6)
-	_moveHeadPhoto(soup)
+	_moveHeadPhoto(soup, before_content)
 	saveSoup(soup, 7)
 	return soup
 

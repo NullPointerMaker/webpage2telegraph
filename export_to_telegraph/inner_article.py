@@ -8,7 +8,7 @@ def _seemsValidRawArticle(soup):
 		return False
 	return not not soup.find('img')
 
-def _getInnerArticle(soup):	
+def _getInnerArticle_(soup):	
 	applicators = [
 		lambda x: x.find("article"),
 		lambda x: x.find("div", {"id" : "js_content"}),
@@ -23,3 +23,12 @@ def _getInnerArticle(soup):
 		if _seemsValidRawArticle(candidate):
 			soup = candidate
 	return soup
+
+def _getInnerArticle(soup):
+	all_content = str(soup)
+	inner = _getInnerArticle_(soup)
+	index = all_content.find(str(inner))
+	if index == -1:
+		return inner, None
+	print('[DEBUG] HERE')
+	return inner, all_content[:index]
