@@ -28,10 +28,12 @@ def _findFigure(soup, before_content):
 			return figure
 	if not before_content:
 		return 
-	before_content = BeautifulSoup(before_content)
+	before_content = BeautifulSoup(before_content, features="lxml")
 	figures = before_content.find_all('figure')
 	if len(list(figures)) == 1:
 		return figures[0]
+	if 'telegraph.co.uk' in str(before_content):
+		return figures[-1]
 
 def _moveHeadPhoto(soup, before_content):
 	figure = _findFigure(soup, before_content)

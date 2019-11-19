@@ -30,5 +30,4 @@ def _getInnerArticle(soup):
 	index = all_content.find(str(inner))
 	if index == -1:
 		return inner, None
-	print('[DEBUG] HERE')
 	return inner, all_content[:index]
