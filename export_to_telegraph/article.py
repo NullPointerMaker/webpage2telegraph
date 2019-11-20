@@ -37,7 +37,12 @@ def _getArticle(url):
 		with open(cache) as f:
 			content = f.read()
 	except:
-		content = requests.get(url).text
+		headers = {
+			'method': 'GET',
+			'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3',
+			'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.97 Safari/537.36',
+		}
+		content = requests.get(url, headers=headers).text
 		with open(cache, 'w') as f:
 			f.write(content)
 	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')

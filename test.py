@@ -6,6 +6,7 @@ import os
 import sys
 
 urls = [
+	'https://www.upworthy.com/child-abuse-pediatrician-corrects-falsehoods-about-the-hymen-with-a-vital-anatomy-lesson?fbclid=IwAR1KTplSMfs0Jc4UMD72SFQvE9hOXJCHO1BWikkhdeiyLUEa6K2hNybWqPU',
 	'https://friendlyatheist.patheos.com/2019/11/19/atheists-sue-tn-school-district-for-constantly-pushing-christianity-on-kids/?utm_source=dlvr.it&utm_medium=facebook&fbclid=IwAR1XpisP03VhYJmcqvdnrdVEN5aYOgiUcaECCb1jvhRL_4nZpZWa6P9QQdM',
 	'https://abcnews.go.com/Business/chick-fil-longer-fund-anti-lgbtq-organizations/story?id=67111125&fbclid=IwAR3MnanASOGgkcPrXSpDVg2mhByGiKcXdR_7b9KCxhpb6jX5JM5p7xQ1jck&fbclid=IwAR0Id8qQNvuDpY2gtdVCgCcF2zSGnaey-jGiJglOmxJt8iJT2mTWAyxfkP0',
 	'https://www.insider.com/ohio-abortion-ban-proposal-can-you-reimplant-ectopic-pregnancies-2019-11?utm_content=bufferf7463&utm_medium=social&utm_source=facebook.com&utm_campaign=buffer-parenting&fbclid=IwAR0yVFd_76M1S5J108myzHeZ0dmrWkm2zOl21gfbWQt4OfsLqgJO12-Jo9E',
