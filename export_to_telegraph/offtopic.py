@@ -14,7 +14,8 @@ OFFTOPIC_ATT = [
 	'story-body__unordered-list', 'story-image-copyright', 'article-header', 
 	'top-wrapper', 'bottom-of-article', 'bottom-wrapper', 'linkList', 
 	'display:none;', 'accordion', 'el-editorial-source', 'video__end-slate__tertiary-title',
-	'adblocker', 'tagline', 'navbar', 'navmenu', 'topHeader', 'Post Bottom'
+	'adblocker', 'tagline', 'navbar', 'navmenu', 'topHeader', 'Post Bottom',
+	't_callout', 'add-interest'
 ]
 
 OFFTOPIC_CLASSES = ['ads']

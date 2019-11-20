@@ -17,6 +17,7 @@ def _getInnerArticle_(soup):
 		lambda x: x.find("div", class_ = "post-text"),
 		lambda x: x.find("div", {"id" : "bodyContent"}),
 		lambda x: x.find("div", {"id" : "content_JS"}),
+		lambda x: x.find("div", class_ = "main-post"),
 	]
 	for applicator in applicators:
 		candidate = applicator(soup)
