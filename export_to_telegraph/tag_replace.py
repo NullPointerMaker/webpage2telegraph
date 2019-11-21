@@ -4,6 +4,19 @@
 from .common import _copyB, fact
 
 def _tagReplace(soup):
+	wrap_with_i = [
+		soup.find_all("div"),
+		soup.find_all("span"),
+		soup.find_all("p"),
+	]
+	for l in wrap_with_i:
+		for item in l:
+			attrs = str(item.attrs)
+			attrs = attrs.replace(": ", ":")
+			if 'font-style:italic' in attrs:
+				wrapper = fact().new_tag("i")
+				wrapper.append(_copyB(item))
+				item.replace_with(wrapper)
 	wrap_with_p = [
 		soup.find_all("div", class_="article-paragraph"),
 		soup.find_all("section"),
