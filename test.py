@@ -40,9 +40,6 @@ def _test():
 		mode = ''
 	if mode == 'open':
 		mode = ''
-	url = 'https://telegra.ph/%E9%A6%99%E6%B8%AF%E6%8A%97%E8%AE%AE%E8%80%85%E8%83%8C%E5%90%8E%E7%9A%84%E5%BF%97%E6%84%BF%E8%80%85%E5%A4%A7%E5%86%9B-11-16'
-	print(export(url, True, False))
-	return
 	for url in urls:
 		if not mode in url:
 			continue
