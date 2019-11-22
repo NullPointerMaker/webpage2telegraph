@@ -61,7 +61,6 @@ def _isEditable(p, url):
 	path = _getTelegraphPath(url)
 	if not path:
 		return False
-	print(p.access_token)
 	r = p._api_request('getPage', {
         'path': path,
         'fields': ['can_edit'],
