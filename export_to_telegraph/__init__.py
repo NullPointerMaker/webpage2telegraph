@@ -7,6 +7,7 @@ token = ''
 from html_telegraph_poster import TelegraphPoster
 from .article import _getArticle
 from .common import _seemsValidText
+from telegram_util import matchKey
 
 def _getPoster():
 	global token
@@ -49,11 +50,38 @@ def isConfident(url, soup):
 			return True
 	return False
 
+def _getTelegraphPath(url):
+	marker = 'telegra.ph/'
+	index = url.find(marker)	
+	if index == -1:
+		return
+	return url[index + len(marker):]
+
+def _isEditable(p, url):
+	path = _getTelegraphPath(url)
+	if not path:
+		return False
+	print(p.access_token)
+	r = p._api_request('getPage', {
+        'path': path,
+        'fields': ['can_edit'],
+        'access_token': token
+    })
+	if not r:
+		return False
+	r = r.get('result', {})
+	if r.get('can_edit'):
+		return True
+	# seems telegra.ph api stop to return the can_edit field, use confidenturl heuristics instead
+	return isConfidentUrl(r.get('author_url')) 
+
 def export(url, throw_exception=False, force=False):
 	try:
 		if not force and not isConfidentUrl(url):
 			return
 		p = _getPoster()
+		if not force and _isEditable(p, url):
+			return url
 		article = getArticle(url, throw_exception)
 		if not article.text or not article.text.text.strip():
 			article.text = '<div>TO BE ADDED</div>'
