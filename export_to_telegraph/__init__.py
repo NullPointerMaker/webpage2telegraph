@@ -66,6 +66,7 @@ def _isEditable(p, url):
         'fields': ['can_edit'],
         'access_token': token
     })
+    
 	if not r:
 		return False
 	r = r.get('result', {})
