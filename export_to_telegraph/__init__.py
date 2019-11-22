@@ -35,8 +35,11 @@ def getArticle(url, throw_exception=False):
 		if throw_exception:
 			raise e
 
+def isConfidentUrl(url):
+	return matchKey(url, ['mp.weixin.qq.com', 'stackoverflow', 'bbc', 'nyt', 'telegra'])
+
 def isConfident(url, soup):
-	if not matchKey(url, ['mp.weixin.qq.com', 'stackoverflow', 'bbc', 'nyt', 'telegra']):
+	if not isConfidentUrl(url):
 		return False
 	if not _seemsValidText(soup):
 		return False
@@ -48,6 +51,8 @@ def isConfident(url, soup):
 
 def export(url, throw_exception=False, force=False):
 	try:
+		if not force and not isConfidentUrl(url):
+			return
 		p = _getPoster()
 		article = getArticle(url, throw_exception)
 		if not article.text or not article.text.text.strip():
