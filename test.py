@@ -6,6 +6,7 @@ import os
 import sys
 
 urls = [
+	'https://www.haaretz.com/jewish/judaism-israel-and-diaspora-conference/.premium.MAGAZINE-immigration-to-israel-is-on-the-rise-thanks-to-these-non-jews-1.8026824',
 	'https://mp.weixin.qq.com/s/k21-ydgB_vbqyZ57TbPkNQ',
 	'https://friendlyatheist.patheos.com/2019/11/19/atheists-sue-tn-school-district-for-constantly-pushing-christianity-on-kids/?utm_source=dlvr.it&utm_medium=facebook&fbclid=IwAR1XpisP03VhYJmcqvdnrdVEN5aYOgiUcaECCb1jvhRL_4nZpZWa6P9QQdM',
 	'https://abcnews.go.com/Business/chick-fil-longer-fund-anti-lgbtq-organizations/story?id=67111125&fbclid=IwAR3MnanASOGgkcPrXSpDVg2mhByGiKcXdR_7b9KCxhpb6jX5JM5p7xQ1jck&fbclid=IwAR0Id8qQNvuDpY2gtdVCgCcF2zSGnaey-jGiJglOmxJt8iJT2mTWAyxfkP0',

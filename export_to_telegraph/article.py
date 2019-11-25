@@ -17,7 +17,9 @@ class _Article(object):
 		self.text = text
 		self.url = url
 
-def _findUrl(soup):
+def _findUrl(url, soup):
+	if 'telegra.ph' not in url:
+		return
 	address = soup.find('address')
 	if not address:
 		return
@@ -56,7 +58,7 @@ def _getArticle(url):
 	else:
 		content = _getUrlContent(url)
 	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
-	article_url = _findUrl(soup)
+	article_url = _findUrl(url, soup)
 	doc = Document(content)
 	return _Article(
 		_findTitle(soup, doc), 
