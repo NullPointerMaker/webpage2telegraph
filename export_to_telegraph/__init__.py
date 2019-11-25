@@ -84,7 +84,6 @@ def export(url, throw_exception=False, force=False):
 		article = getArticle(url, throw_exception)
 		if not article.text or not article.text.text.strip():
 			article.text = '<div>TO BE ADDED</div>'
-		print(article.url)
 		try:
 			r = p.post(
 				title = article.title, 
