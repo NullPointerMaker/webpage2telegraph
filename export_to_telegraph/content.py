@@ -25,7 +25,7 @@ def _findMainFromSoup(soup, url):
 	saveSoup(soup, 1)
 	soup = _decomposeOfftopic(soup, url)
 	saveSoup(soup, 2)
-	soup = _cleanupImages(soup, domain)
+	soup = _cleanupImages(soup, domain, url)
 	saveSoup(soup, 3)
 	soup, before_content = _getInnerArticle(soup)
 	saveSoup(soup, 4)

@@ -13,7 +13,7 @@ def _getCaption(item):
 			caption.append(_copyB(x))
 			return caption
 
-def _formatImgUrl(raw, domain):
+def _formatImgUrl(raw, domain, url):
 	parts = raw.split('/')
 	success = False
 	for index, part in enumerate(parts):
@@ -24,10 +24,13 @@ def _formatImgUrl(raw, domain):
 					break
 			except:
 				pass
-	if success:
+	if success and 'theguardian' not in url:
 		parts[index + 1] = '1300'
 	raw = '/'.join(parts)
-	raw = re.sub('width=\d\d*', 'width=1300', raw)
+	if 'theguardian' not in url:
+		raw = re.sub('width=\d\d*', 'width=1300', raw)
+	if 'wired.co' in url:
+		raw = re.sub('/\d\d*/', '/1300/', raw)
 	if raw.startswith('//'):
 		return 'https:' + raw
 	if raw.startswith('/'):
@@ -37,18 +40,18 @@ def _formatImgUrl(raw, domain):
 MORE_CERTAIN_IMG_ATTRS = ['data-src-large', 'data-src']
 IMG_ATTRS = MORE_CERTAIN_IMG_ATTRS + ['src'] # people would put junk in src field
 
-def _getImgInsideFigure(figure, domain):
+def _getImgInsideFigure(figure, domain, url):
 	for raw_img in figure.find_all():
 		for attr in IMG_ATTRS:
 			if raw_img.get(attr):
-				r = fact().new_tag("img", src = _formatImgUrl(raw_img[attr], domain))
+				r = fact().new_tag("img", src = _formatImgUrl(raw_img[attr], domain, url))
 				if raw_img.get('title'):
 					r['title'] = raw_img.get('title')
 				return r
 	figure.decompose()
 
-def _cleanupFigure(figure, domain):
-	img = _getImgInsideFigure(figure, domain)
+def _cleanupFigure(figure, domain, url):
+	img = _getImgInsideFigure(figure, domain, url)
 	if not img:
 		return
 	caption = figure.find('figcaption')
@@ -84,7 +87,7 @@ def _yieldPossibleImg(soup):
 		for x in l:
 			yield x
 
-def _cleanupImages(soup, domain):
+def _cleanupImages(soup, domain, url):
 	for img in soup.find_all("div", class_="js-delayed-image-load"):
 		img.name = 'img'
 	
@@ -97,7 +100,7 @@ def _cleanupImages(soup, domain):
 		item.decompose()
 
 	for figure in soup.find_all('figure'):
-		r = _cleanupFigure(figure, domain)
+		r = _cleanupFigure(figure, domain, url)
 		if r: 
 			figure.replace_with(r)
 		else:
@@ -116,7 +119,7 @@ def _cleanupImages(soup, domain):
 		if caption:
 			figure.append(_copyB(caption))
 			caption.decompose()
-		r = _cleanupFigure(figure, domain)
+		r = _cleanupFigure(figure, domain, url)
 		if r: 
 			img.replace_with(r)
 		else:
