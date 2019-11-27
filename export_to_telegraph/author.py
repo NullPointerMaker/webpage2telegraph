@@ -25,7 +25,11 @@ def _findPossibleRawContent(item_iterator, words_to_ignore = []):
 			continue
 		r = _findRawContent(item)
 		if r and not matchKey(r, words_to_ignore):
-			return r
+			index = r.find(' - ')
+			if index == -1:
+				return r
+			else:
+				r[:index]
 
 def _findOrgName(soup):
 	head = str(soup.find('head'))
