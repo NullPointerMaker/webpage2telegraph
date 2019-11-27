@@ -8,7 +8,6 @@ import sys
 urls = [
 	'https://www.wired.co.uk/article/taiwan-democracy-social-media?fbclid=IwAR2ZUJDUKl5N-YVdYEezqpL34zUkDuaEKUzlELnKWwjbv8xrNFQwOOg9bCI',
 	'https://www.pinknews.co.uk/2019/11/27/one-four-adults-uk-not-proud-yougov-akt-study/?fbclid=IwAR3Lvx-oNtUiqvbL5wQOUceqXeaoO2A3gmClEItPYwLWMollYS9-H8Ny1nI',
-	'https://www.nbcnews.com/feature/nbc-out/11-gay-friendly-small-cities-big-red-states-n1086081?fbclid=IwAR05M3QkFKe7WvmEd7SqkmPmmRBT4MPRvpBEStyulCsqa2wuuzRYkzwaDi4',
 	'https://www.theguardian.com/news/2017/oct/26/the-liberal-left-divide-reshaping-american-politics',
 	'https://www.haaretz.com/jewish/judaism-israel-and-diaspora-conference/.premium.MAGAZINE-immigration-to-israel-is-on-the-rise-thanks-to-these-non-jews-1.8026824',
 	'https://mp.weixin.qq.com/s/k21-ydgB_vbqyZ57TbPkNQ',
