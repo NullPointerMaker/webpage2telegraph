@@ -29,7 +29,7 @@ def _findPossibleRawContent(item_iterator, words_to_ignore = []):
 			if index == -1:
 				return r
 			else:
-				r[:index]
+				return r[:index]
 
 def _findOrgName(soup):
 	head = str(soup.find('head'))
