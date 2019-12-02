@@ -52,7 +52,6 @@ def _findAuthor(soup):
 	author_name = _findPossibleRawContent(
 		_yieldPossibleAuthorItem(soup), 
 		['://', 'http', 'www'])
-	print(author_name)
 	org, required = _findOrgName(soup)
 	if not author_name:
 		return org

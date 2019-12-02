@@ -2,9 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from .common import _seemsValidText
+from telegram_util import matchKey
 
-def _seemsValidRawArticle(soup):
-	if not _seemsValidText(soup):
+SHORT_ARTICLE = ['每日书摘']
+
+def _seemsValidRawArticle(soup, text_limit = 500):
+	if not _seemsValidText(soup, limit = text_limit):
 		return False
 	return not not soup.find('img')
 
@@ -19,9 +22,11 @@ def _getInnerArticle_(soup):
 		lambda x: x.find("div", {"id" : "content_JS"}),
 		lambda x: x.find("div", class_ = "main-post"),
 	]
+	is_short = matchKey(soup.text, SHORT_ARTICLE)
+	text_limit = 150 if is_short else 500
 	for applicator in applicators:
 		candidate = applicator(soup)
-		if _seemsValidRawArticle(candidate):
+		if _seemsValidRawArticle(candidate, text_limit = text_limit):
 			soup = candidate
 	return soup
 

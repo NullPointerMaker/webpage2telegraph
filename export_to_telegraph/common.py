@@ -16,10 +16,10 @@ def fact():
 def _copyB(soup):
 	return BeautifulSoup(str(soup), features="lxml")
 
-def _seemsValidText(soup):
+def _seemsValidText(soup, limit=500):
 	if not soup:
 		return False
-	return soup.text and len(soup.text) > 500
+	return soup.text and len(soup.text) > limit
 
 def _wrap(name, *children):
 	r = fact().new_tag(name)
