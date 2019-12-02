@@ -6,6 +6,7 @@ import os
 import sys
 
 urls = [
+	'https://mp.weixin.qq.com/s/P5GEOscfVBH_UZ_CVkT9Sg',
 	'https://www.wired.co.uk/article/taiwan-democracy-social-media?fbclid=IwAR2ZUJDUKl5N-YVdYEezqpL34zUkDuaEKUzlELnKWwjbv8xrNFQwOOg9bCI',
 	'https://www.pinknews.co.uk/2019/11/27/one-four-adults-uk-not-proud-yougov-akt-study/?fbclid=IwAR3Lvx-oNtUiqvbL5wQOUceqXeaoO2A3gmClEItPYwLWMollYS9-H8Ny1nI',
 	'https://www.theguardian.com/news/2017/oct/26/the-liberal-left-divide-reshaping-american-politics',

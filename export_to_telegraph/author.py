@@ -6,10 +6,10 @@ from telegram_util import matchKey
 
 def _yieldPossibleAuthorItem(soup):
 	yield soup.find("meta", {"name": "byl"})
-	yield soup.find("a", {"id" : "js_name"})
 	yield soup.find("span", {"class" : "byline__name"})
 	yield soup.find("meta", {"property": "article:author"})
 	yield soup.find("meta", {"name": "author"})
+	yield soup.find("a", {"id" : "js_name"})
 	for item in soup.find_all('meta'):
 		if 'author' in str(item.attrs):
 			yield item
@@ -52,6 +52,7 @@ def _findAuthor(soup):
 	author_name = _findPossibleRawContent(
 		_yieldPossibleAuthorItem(soup), 
 		['://', 'http', 'www'])
+	print(author_name)
 	org, required = _findOrgName(soup)
 	if not author_name:
 		return org
