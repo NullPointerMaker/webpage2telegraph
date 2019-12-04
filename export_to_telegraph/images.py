@@ -52,10 +52,13 @@ def _getImgInsideFigure(figure, domain):
 	figure.decompose()
 
 def _cleanupFigure(figure, domain):
+	iframe = figure.find('iframe')
+	if iframe:
+		r = fact().new_tag("iframe", src = _formatImgUrl(iframe['src'], domain))
+		iframe.replace_with(r)
+		return figure
 	img = _getImgInsideFigure(figure, domain)
 	if not img:
-		if figure.find('iframe'):
-			return figure
 		return
 	caption = figure.find('figcaption')
 	if not caption and img.get('title'):
