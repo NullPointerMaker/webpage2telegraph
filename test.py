@@ -6,7 +6,7 @@ import os
 import sys
 
 urls = [
-	'https://telegra.ph/We-dont-need-to-bleed-why-many-women-are-giving-up-on-periods--Life-and-style--The-Guardian-12-04',
+	'https://www.theguardian.com/lifeandstyle/2019/jul/18/women-dont-need-to-bleed-why-many-more-of-us-are-giving-up-periods?dt_dapp=1',
 	'https://mp.weixin.qq.com/s/AGJWUowa_2Yd6LJp6UgyQg',
 	'https://mp.weixin.qq.com/s/9mgyoSNNzIfuh4_90dGtlQ',
 	'https://mp.weixin.qq.com/s/P5GEOscfVBH_UZ_CVkT9Sg',

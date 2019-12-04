@@ -4,6 +4,7 @@
 from telegram_util import matchKey
 from .common import fact, _wrap
 from .images import _yieldPossibleImg
+import sys
 
 OFFTOPIC_TAG = ['small', 'address', 'meta', 'script']
 
@@ -15,7 +16,8 @@ OFFTOPIC_ATT = [
 	'top-wrapper', 'bottom-of-article', 'bottom-wrapper', 'linkList', 
 	'display:none;', 'accordion', 'el-editorial-source', 'video__end-slate__tertiary-title',
 	'adblocker', 'tagline', 'navbar', 'navmenu', 'topHeader', 'Post Bottom',
-	't_callout', 'add-interest', 'bb-newsletter', 'popover', 'toast'
+	't_callout', 'add-interest', 'bb-newsletter', 'popover', 'toast', 'after-article', 
+	'submeta'
 ]
 
 OFFTOPIC_CLASSES = ['ads']
@@ -36,7 +38,7 @@ def _isOffTopic(attrs):
 		return False
 	r = []
 	for k, v in attrs.items():
-		if matchKey(k, ['href', 'src', 'url', 'alt']):
+		if matchKey(k, ['href', 'src', 'url', 'alt', 'data']):
 			continue
 		r.append(str(k) + ' : ' + str(v))
 	r = '\n'.join(r)
@@ -50,27 +52,37 @@ def _isOffTopic(attrs):
 		return True
 	return False
 
+def _decompose(item):
+	if 'offtopic' in str(sys.argv) and item.text and len(item.text) > 500:
+		print('decomposing long text: ', item.attrs)
+		if item.name in OFFTOPIC_TAG:
+			print(item.name)
+		for att in OFFTOPIC_ATT:
+			if att in str(item.attrs):
+				print(att)
+	item.decompose()
+
 def _decompseAds(soup):
 	for item in soup.find_all("div", class_="article-paragraph"):
 		if matchKey(item.text, DIV_AD_WORDS):
-			item.decompose()
+			_decompose(item)
 	for item in soup.find_all("p"):
 		if matchKey(item.text, P_AD_WORDS) or item.text in ['广告']:
-			item.decompose()
+			_decompose(item)
 
 def _decomposeOfftopic(soup, url):
 	for item in soup.find_all():
 		if _isOffTopic(item.attrs) or \
 			item.name in OFFTOPIC_TAG:
-			item.decompose()
+			_decompose(item)
 
 	for c in OFFTOPIC_CLASSES:
 		for item in soup.find_all(class_=c):
-			item.decompose()
+			_decompose(item)
 
 	if not matchKey(url, ['medium']):
 		for item in soup.find_all('h1'):
-			item.decompose()
+			_decompose(item)
 
 	_decompseAds(soup)
 
@@ -81,7 +93,7 @@ def _decomposeOfftopic(soup, url):
 			if img:
 				item.replace_with(img)
 			else:
-				item.decompose()
+				_decompose(item)
 			continue
 		if not img:
 			item.replace_with(s)
