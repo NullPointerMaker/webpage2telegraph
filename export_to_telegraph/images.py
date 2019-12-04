@@ -54,6 +54,8 @@ def _getImgInsideFigure(figure, domain):
 def _cleanupFigure(figure, domain):
 	img = _getImgInsideFigure(figure, domain)
 	if not img:
+		if figure.find('iframe'):
+			return figure
 		return
 	caption = figure.find('figcaption')
 	if not caption and img.get('title'):
