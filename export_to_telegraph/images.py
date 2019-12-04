@@ -3,6 +3,7 @@
 
 import re
 from .common import fact, _copyB
+from telegram_util import matchKey
 
 def _getCaption(item):
 	if not item:
@@ -13,7 +14,7 @@ def _getCaption(item):
 			caption.append(_copyB(x))
 			return caption
 
-def _formatImgUrl(raw, domain, url):
+def _formatImgUrl(raw, domain):
 	parts = raw.split('/')
 	success = False
 	for index, part in enumerate(parts):
@@ -24,12 +25,12 @@ def _formatImgUrl(raw, domain, url):
 					break
 			except:
 				pass
-	if success and 'theguardian' not in url:
+	if success and 'guim' not in raw:
 		parts[index + 1] = '1300'
 	raw = '/'.join(parts)
-	if 'theguardian' not in url:
+	if not matchKey(raw, ['guim']):
 		raw = re.sub('width=\d\d*', 'width=1300', raw)
-	if 'wired.co' in url:
+	if matchKey(raw, ['condecdn']):
 		raw = re.sub('/\d\d*/', '/1300/', raw)
 	if raw.startswith('//'):
 		return 'https:' + raw
@@ -40,18 +41,18 @@ def _formatImgUrl(raw, domain, url):
 MORE_CERTAIN_IMG_ATTRS = ['data-src-large', 'data-src']
 IMG_ATTRS = MORE_CERTAIN_IMG_ATTRS + ['src'] # people would put junk in src field
 
-def _getImgInsideFigure(figure, domain, url):
+def _getImgInsideFigure(figure, domain):
 	for raw_img in figure.find_all():
 		for attr in IMG_ATTRS:
 			if raw_img.get(attr):
-				r = fact().new_tag("img", src = _formatImgUrl(raw_img[attr], domain, url))
+				r = fact().new_tag("img", src = _formatImgUrl(raw_img[attr], domain))
 				if raw_img.get('title'):
 					r['title'] = raw_img.get('title')
 				return r
 	figure.decompose()
 
-def _cleanupFigure(figure, domain, url):
-	img = _getImgInsideFigure(figure, domain, url)
+def _cleanupFigure(figure, domain):
+	img = _getImgInsideFigure(figure, domain)
 	if not img:
 		return
 	caption = figure.find('figcaption')
@@ -87,7 +88,7 @@ def _yieldPossibleImg(soup):
 		for x in l:
 			yield x
 
-def _cleanupImages(soup, domain, url):
+def _cleanupImages(soup, domain):
 	for img in soup.find_all("div", class_="js-delayed-image-load"):
 		img.name = 'img'
 	
@@ -100,7 +101,7 @@ def _cleanupImages(soup, domain, url):
 		item.decompose()
 
 	for figure in soup.find_all('figure'):
-		r = _cleanupFigure(figure, domain, url)
+		r = _cleanupFigure(figure, domain)
 		if r: 
 			figure.replace_with(r)
 		else:
@@ -119,7 +120,7 @@ def _cleanupImages(soup, domain, url):
 		if caption:
 			figure.append(_copyB(caption))
 			caption.decompose()
-		r = _cleanupFigure(figure, domain, url)
+		r = _cleanupFigure(figure, domain)
 		if r: 
 			img.replace_with(r)
 		else:
