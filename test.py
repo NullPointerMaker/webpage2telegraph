@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from export_to_telegraph import export, _formaturl
+import export_to_telegraph
+from export_to_telegraph import export, _formaturl, getView
 import os
 import sys
 
