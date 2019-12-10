@@ -57,15 +57,14 @@ def _getTelegraphPath(url):
 		return
 	return url[index + len(marker):]
 
-def getView(url):
+def get(url):
 	p = _getPoster()
 	r = p._api_request('getPage', {
 		'path': _getTelegraphPath(url),
 		'fields': ['canEdit', 'can_edit'],
 		'access_token': token
 	})
-	r = r.get('result', {})
-	return r.get('views', 0)
+	return r.get('result', {})
 
 def _isEditable(p, url):
 	path = _getTelegraphPath(url)
