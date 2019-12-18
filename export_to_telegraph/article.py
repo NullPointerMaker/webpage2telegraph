@@ -8,6 +8,7 @@ from .title import _findTitle
 from .author import _findAuthor
 from .content import _findMain
 import hashlib
+import readee
 import sys
 
 class _Article(object):
@@ -63,5 +64,5 @@ def _getArticle(url):
 	return _Article(
 		_findTitle(soup, doc), 
 		_findAuthor(soup), 
-		_findMain(soup, doc, url), 
+		readee.export(url, content=content, list_replace=True, move_head_photo=True),
 		article_url)
