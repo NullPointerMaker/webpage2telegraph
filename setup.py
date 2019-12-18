@@ -23,7 +23,7 @@ setuptools.setup(
         'bs4',
         'readability-lxml',
         'telegram_util>=0.0.20',
-        'readee>=0.0.2',
+        'readee>=0.0.4',
     ],
     python_requires='>=3.0',
 )
