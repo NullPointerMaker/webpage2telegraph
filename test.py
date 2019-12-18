@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import export_to_telegraph
-from export_to_telegraph import export, _formaturl, getView
+from export_to_telegraph import export, _formaturl
 import os
 import sys
 
