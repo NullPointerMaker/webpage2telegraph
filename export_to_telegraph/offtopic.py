@@ -17,7 +17,7 @@ OFFTOPIC_ATT = [
 	'display:none;', 'accordion', 'el-editorial-source', 'video__end-slate__tertiary-title',
 	'adblocker', 'tagline', 'navbar', 'navmenu', 'topHeader', 'Post Bottom',
 	't_callout', 'add-interest', 'bb-newsletter', 'popover', 'toast', 'after-article', 
-	'submeta', 'rich-link__container'
+	'submeta', 'rich-link__container', 'content__meta-container'
 ]
 
 OFFTOPIC_CLASSES = ['ads']
