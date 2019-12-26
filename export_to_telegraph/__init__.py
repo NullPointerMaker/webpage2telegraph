@@ -98,7 +98,7 @@ def export(url, throw_exception=False, force=False):
 				title = article.title, 
 				author = article.author, 
 				author_url = _formaturl(article.url or url), 
-				text = str(article.text)[:80000])
+				text = str(article.text))
 		except Exception as e:
 			if 'CONTENT_TEXT_REQUIRED' in str(e):
 				r = p.post(
