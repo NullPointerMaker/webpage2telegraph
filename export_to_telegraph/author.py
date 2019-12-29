@@ -4,15 +4,23 @@
 from .common import _findRawContent
 from telegram_util import matchKey
 
+def getAttrString(attrs):
+	if not attrs:
+		return ''
+	r = []
+	for k, v in attrs.items():
+		if k in ['content']:
+			continue
+		r.append(k + ': ' + v)
+	return '\n'.join(r)
+
 def _yieldPossibleAuthorItem(soup):
 	yield soup.find("meta", {"name": "byl"})
 	yield soup.find("span", {"class" : "byline__name"})
-	yield soup.find("meta", {"property": "article:author"})
-	yield soup.find("meta", {"name": "author"})
-	yield soup.find("a", {"id" : "js_name"})
 	for item in soup.find_all('meta'):
-		if 'author' in str(item.attrs):
+		if 'author' in getAttrString(item.attrs):
 			yield item
+	yield soup.find("a", {"id" : "js_name"})
 		
 def _yieldPossibleOrgItem(soup):
 	yield soup.find("meta", {"property": "twitter:site"})
