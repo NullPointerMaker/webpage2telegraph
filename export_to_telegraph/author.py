@@ -11,7 +11,7 @@ def getAttrString(attrs):
 	for k, v in attrs.items():
 		if k in ['content']:
 			continue
-		r.append(k + ': ' + v)
+		r.append(k + ': ' + str(v))
 	return '\n'.join(r)
 
 def _yieldPossibleAuthorItem(soup):
