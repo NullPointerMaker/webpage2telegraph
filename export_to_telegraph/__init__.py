@@ -88,7 +88,6 @@ def _isEditable(p, url):
 def toSimplify(article):
 	b = BeautifulSoup(str(article.text), 'html.parser')
 	for x in b.findAll(text=True):
-		print(x)
 		x.replaceWith(HanziConv.toSimplified(x))
 	article.text = b
 	article.title = HanziConv.toSimplified(article.title)
