@@ -9,6 +9,7 @@ from .author import _findAuthor
 import hashlib
 import readee
 import sys
+from hanziconv import HanziConv
 
 class _Article(object):
 	def __init__(self, title, author, text, url = None):
@@ -52,7 +53,7 @@ def _cachedContent(url):
 			f.write(content)
 		return content
 
-def _getArticle(url):
+def _getArticle(url, toSimplified=False):
 	if 'test' in str(sys.argv):
 		content = _cachedContent(url)
 	else:
@@ -60,8 +61,13 @@ def _getArticle(url):
 	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
 	article_url = _findUrl(url, soup)
 	doc = Document(content)
-	return _Article(
+	article = _Article(
 		_findTitle(soup, doc), 
 		_findAuthor(soup), 
-		readee.export(url, content=content, list_replace=True, move_head_photo=True),
+		readee.export(url, content=content, list_replace=True, move_head_photo=True, 
+			toSimplified=toSimplified),
 		article_url)
+	if toSimplified:
+		article.title = HanziConv.toSimplified(article.title)
+		article.author = HanziConv.toSimplified(article.author)
+	return article
