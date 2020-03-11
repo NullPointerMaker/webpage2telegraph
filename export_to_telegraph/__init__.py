@@ -8,6 +8,7 @@ from html_telegraph_poster import TelegraphPoster
 from .article import _getArticle
 from .common import _seemsValidText
 from telegram_util import matchKey
+from hanziconv import HanziConv
 
 def _getPoster():
 	global token
@@ -83,7 +84,7 @@ def _isEditable(p, url):
 	# seems telegra.ph api stop to return the can_edit field, use confidenturl heuristics instead
 	return isConfidentUrl(r.get('author_url')) 
 
-def export(url, throw_exception=False, force=False):
+def export(url, throw_exception=False, force=False, toSimplified=False):
 	try:
 		if not force and not isConfidentUrl(url):
 			return
@@ -93,6 +94,10 @@ def export(url, throw_exception=False, force=False):
 		article = getArticle(url, throw_exception)
 		if not article.text or not article.text.text.strip():
 			article.text = '<div>TO BE ADDED</div>'
+		if toSimplified:
+			article.text = HanziConv.toSimplified(article.text)
+			article.title = HanziConv.toSimplified(article.title)
+			article.author = HanziConv.toSimplified(article.author)
 		try:
 			r = p.post(
 				title = article.title, 

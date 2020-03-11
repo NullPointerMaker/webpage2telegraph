@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="export_to_telegraph",
-    version="0.0.52",
+    version="0.0.53",
     author="Yunzhi Gao",
     author_email="gaoyunzhi@gmail.com",
     description="Library for export webpage to Telegraph.",
@@ -24,6 +24,7 @@ setuptools.setup(
         'readability-lxml',
         'telegram_util>=0.0.31',
         'readee>=0.0.15',
+        'hanziconv>=0.3.2'
     ],
     python_requires='>=3.0',
 )

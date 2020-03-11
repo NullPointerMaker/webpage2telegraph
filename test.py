@@ -7,7 +7,7 @@ import os
 import sys
 
 urls = [
-	'https://madeinchinajournal.com/2019/04/18/the-plight-of-sex-workers-in-china%ef%bb%bf-from-criminalisation-and-abuse-to-activism/'
+	'https://whogovernstw.org/2020/03/03/tiehchihchang1/'
 ]
 
 def _test():
