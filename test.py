@@ -7,7 +7,7 @@ import os
 import sys
 
 urls = [
-	'https://whogovernstw.org/2020/03/03/tiehchihchang1/'
+	'https://www.thinkingtaiwan.com/content/8162'
 ]
 
 def _test():
