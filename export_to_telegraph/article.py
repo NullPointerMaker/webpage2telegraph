@@ -10,6 +10,7 @@ import hashlib
 import readee
 import sys
 from hanziconv import HanziConv
+import cached_url
 
 class _Article(object):
 	def __init__(self, title, author, text, url = None):
@@ -47,5 +48,6 @@ def _getArticle(url, toSimplified=False):
 		article_url)
 	if toSimplified:
 		article.title = HanziConv.toSimplified(article.title)
+		print(article.author[1:])
 		article.author = HanziConv.toSimplified(article.author)
 	return article
