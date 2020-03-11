@@ -40,5 +40,4 @@ def _findTitle(soup, doc):
 		result = _findTitleFromItem(item)
 		if result and len(result) < 200:
 			return result
-	print('DEBUG WARNING, SHOULD NOT BE HERE')
 	return _cleanupRawTitle(doc.title())

@@ -35,8 +35,7 @@ def _trimWebpage(raw):
 	return raw
 
 def _getArticle(url, toSimplified=False):
-	content = cached_url.get(url, 
-		headers={'Content-Type': 'application/json; charset=utf-8'})
+	content = cached_url.get(url)
 	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
 	article_url = _findUrl(url, soup)
 	doc = Document(content)
