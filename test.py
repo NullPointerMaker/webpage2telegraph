@@ -21,7 +21,7 @@ def _test():
 		if not mode in url:
 			continue
 		print('原文：', url)
-		r = export(url, True, True)
+		r = export(url, True, True, True)
 		print('导出：', r)
 		if 'open' in str(sys.argv):
 			os.system('open ' + _formaturl(r) + ' -g')

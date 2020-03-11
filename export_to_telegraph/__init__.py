@@ -95,7 +95,7 @@ def export(url, throw_exception=False, force=False, toSimplified=False):
 		if not article.text or not article.text.text.strip():
 			article.text = '<div>TO BE ADDED</div>'
 		if toSimplified:
-			article.text = HanziConv.toSimplified(article.text)
+			article.text = HanziConv.toSimplified(str(article.text))
 			article.title = HanziConv.toSimplified(article.title)
 			article.author = HanziConv.toSimplified(article.author)
 		try:
