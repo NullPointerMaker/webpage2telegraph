@@ -48,6 +48,5 @@ def _getArticle(url, toSimplified=False):
 		article_url)
 	if toSimplified:
 		article.title = HanziConv.toSimplified(article.title)
-		print(article.author[1:])
 		article.author = HanziConv.toSimplified(article.author)
 	return article
