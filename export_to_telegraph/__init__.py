@@ -9,6 +9,7 @@ from .article import _getArticle
 from .common import _seemsValidText
 from telegram_util import matchKey
 from hanziconv import HanziConv
+from bs4 import BeautifulSoup
 
 def _getPoster():
 	global token
@@ -84,6 +85,15 @@ def _isEditable(p, url):
 	# seems telegra.ph api stop to return the can_edit field, use confidenturl heuristics instead
 	return isConfidentUrl(r.get('author_url')) 
 
+def toSimplify(article):
+	b = BeautifulSoup(str(article.text), 'html.parser')
+	for x in b.findAll(text=True):
+		print(x)
+		x.replaceWith(HanziConv.toSimplified(x))
+	article.text = b
+	article.title = HanziConv.toSimplified(article.title)
+	article.author = HanziConv.toSimplified(article.author)
+
 def export(url, throw_exception=False, force=False, toSimplified=False):
 	try:
 		if not force and not isConfidentUrl(url):
@@ -95,9 +105,7 @@ def export(url, throw_exception=False, force=False, toSimplified=False):
 		if not article.text or not article.text.text.strip():
 			article.text = '<div>TO BE ADDED</div>'
 		if toSimplified:
-			article.text = HanziConv.toSimplified(str(article.text))
-			article.title = HanziConv.toSimplified(article.title)
-			article.author = HanziConv.toSimplified(article.author)
+			toSimplify(article)
 		try:
 			r = p.post(
 				title = article.title, 
