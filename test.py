@@ -7,7 +7,7 @@ import os
 import sys
 
 urls = [
-	'https://www.thinkingtaiwan.com/content/8162'
+	'https://mp.weixin.qq.com/s/puvW6OL3KyubcjPEcbS_sA'
 ]
 
 def _test():
@@ -27,4 +27,5 @@ def _test():
 			os.system('open ' + _formaturl(r) + ' -g')
 		print('')
 
-_test()
+if __name__=='__main__':
+	_test()
