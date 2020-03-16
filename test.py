@@ -7,7 +7,7 @@ import os
 import sys
 
 urls = [
-	'https://www.douban.com/note/754053500/'
+	'https://card.weibo.com/article/m/show/id/2309354481663596888219?_wb_client_=1'
 ]
 
 def _test():
