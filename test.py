@@ -7,7 +7,7 @@ import os
 import sys
 
 urls = [
-	'https://mp.weixin.qq.com/s/puvW6OL3KyubcjPEcbS_sA'
+	'https://www.douban.com/note/754053500/'
 ]
 
 def _test():
