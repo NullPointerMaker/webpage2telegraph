@@ -22,10 +22,10 @@ setuptools.setup(
         'html_telegraph_poster',
         'bs4',
         'readability-lxml',
-        'telegram_util>=0.0.31',
-        'readee>=0.0.24',
-        'hanziconv>=0.3.2',
-        'cached_url>=0.0.5'
+        'telegram_util',
+        'readee',
+        'hanziconv',
+        'cached_url'
     ],
     python_requires='>=3.0',
 )
