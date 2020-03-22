@@ -114,3 +114,27 @@ def export(url, throw_exception=False, force=False, toSimplified=False):
 	except Exception as e:
 		if throw_exception:
 			raise e
+
+def clearUrl(url):
+	if 'weibo' in url:
+		index = url.find('?')
+		if index > -1:
+			url = url[:index]
+	if url.endswith('/'):
+		url = url[:-1]
+	if '_' in url:
+		url = '[网页链接](%s)' % url
+	url = url.replace('https://', '')
+	url = url.replace('http://', '')
+	return url
+
+def exportAllInText(soup):
+	text = str(soup).replace('<br/>', '\n')
+	quote = BeautifulSoup(text, features='lxml').text.strip()
+	for link in soup.find_all('a', title=True, href=True):
+		url = link['title']
+		url = clearUrl(export_to_telegraph.export(url) or url)
+		quote = quote.replace(link['href'], ' ' + url + ' ')
+	quote = quote.replace('  ', ' ')
+	quote = quote.replace('\n ', '\n')
+	return quote
