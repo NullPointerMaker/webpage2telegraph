@@ -133,7 +133,7 @@ def exportAllInText(soup):
 	quote = BeautifulSoup(text, features='lxml').text.strip()
 	for link in soup.find_all('a', title=True, href=True):
 		url = link['title']
-		url = clearUrl(export_to_telegraph.export(url) or url)
+		url = clearUrl(export(url) or url)
 		quote = quote.replace(link['href'], ' ' + url + ' ')
 	quote = quote.replace('  ', ' ')
 	quote = quote.replace('\n ', '\n')
