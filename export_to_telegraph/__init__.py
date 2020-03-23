@@ -129,6 +129,8 @@ def clearUrl(url):
 	return url
 
 def exportAllInText(soup):
+	if not soup:
+		return ''
 	text = str(soup).replace('<br/>', '\n')
 	quote = BeautifulSoup(text, features='lxml').text.strip()
 	for link in soup.find_all('a', title=True, href=True):
