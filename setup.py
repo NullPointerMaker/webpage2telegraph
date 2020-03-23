@@ -26,7 +26,7 @@ setuptools.setup(
         'readee',
         'hanziconv',
         'cached_url',
-        'weibo_to_album',
+        'weibo_2_album',
     ],
     python_requires='>=3.0',
 )

@@ -14,7 +14,7 @@ import cached_url
 import time
 import yaml
 from telegram_util import matchKey, getWid
-import weibo_to_album
+import weibo_2_album
 
 class _Article(object):
 	def __init__(self, title, author, text, url = None):
@@ -43,16 +43,17 @@ def getContentFromAlbum(r):
 	result = []
 	for url in r.imgs:
 		result.append('<img src="%s" />' % url)
-	return '<div><title>%s</title>%s%s</div>' % (t.title, r.cap_html, ''.join(result))
+	return '<div><title>%s</title>%s%s</div>' % \
+		(r.title, r.cap_html, ''.join(result))
 
 def getContent(url):
-	if 'weibo.com' in url:
+	if 'weibo.c' in url:
 		wid = getWid(url)
 		if matchKey(url, ['card', 'ttarticle']):
 			new_url = 'https://card.weibo.com/article/m/aj/detail?id=' + wid + '&_t=' + str(int(time.time()))
 			json = yaml.load(cached_url.get(new_url, headers={'referer': url}), Loader=yaml.FullLoader)
 			return '<div><title>%s</title>%s</div>' % (json['data']['title'], json['data']['content'])
-		return getContentFromAlbum(weibo_to_album.get(url))
+		return getContentFromAlbum(weibo_2_album.get(url))
 	return cached_url.get(url)
 	
 def _getArticle(url, toSimplified=False):
