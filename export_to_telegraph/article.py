@@ -14,6 +14,7 @@ import cached_url
 import time
 import yaml
 from telegram_util import matchKey, getWid
+import weibo_to_album
 
 class _Article(object):
 	def __init__(self, title, author, text, url = None):
@@ -37,6 +38,12 @@ def _trimWebpage(raw):
 	if index != -1:
 		return raw[:index]
 	return raw
+
+def getContentFromAlbum(r):
+	result = []
+	for url in r.imgs:
+		result.append('<img src="%s" />' % url)
+	return '<div><title>%s</title>%s%s</div>' % (t.title, r.cap_html, ''.join(result))
 
 def getContent(url):
 	if 'weibo.com' in url:

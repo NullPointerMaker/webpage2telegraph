@@ -25,7 +25,8 @@ setuptools.setup(
         'telegram_util',
         'readee',
         'hanziconv',
-        'cached_url'
+        'cached_url',
+        'weibo_to_album',
     ],
     python_requires='>=3.0',
 )
