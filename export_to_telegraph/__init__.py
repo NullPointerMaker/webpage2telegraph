@@ -9,6 +9,7 @@ from .article import _getArticle
 from .common import _seemsValidText
 from telegram_util import matchKey
 from bs4 import BeautifulSoup
+from telegram_util import escapeMarkdown, clearUrl
 
 def _getPoster():
 	global token
@@ -115,19 +116,6 @@ def export(url, throw_exception=False, force=False, toSimplified=False):
 		if throw_exception:
 			raise e
 
-def clearUrl(url):
-	if 'weibo' in url and 'id=' not in url: 
-		index = url.find('?')
-		if index > -1:
-			url = url[:index]
-	if url.endswith('/'):
-		url = url[:-1]
-	if '_' in url:
-		url = '[网页链接](%s)' % url
-	url = url.replace('https://', '')
-	url = url.replace('http://', '')
-	return url
-
 def exportAllInText(soup):
 	if not soup:
 		return ''
@@ -137,6 +125,4 @@ def exportAllInText(soup):
 		url = link['title']
 		url = clearUrl(export(url) or url)
 		quote = quote.replace(link['href'], ' ' + url + ' ')
-	quote = quote.replace('  ', ' ')
-	quote = quote.replace('\n ', '\n')
-	return quote
+	return escapeMarkdown(quote)

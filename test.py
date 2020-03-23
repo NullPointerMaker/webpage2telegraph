@@ -7,7 +7,8 @@ import os
 import sys
 
 urls = [
-	'https://www.weibo.com/ttarticle/p/show?id=2309404485259478565112'
+	'https://www.weibo.com/ttarticle/p/show?id=2309404485259478565112'，
+	'https://m.weibo.cn/detail/4485589606424811#comment'
 ]
 
 def _test():
