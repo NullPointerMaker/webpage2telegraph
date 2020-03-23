@@ -116,7 +116,7 @@ def export(url, throw_exception=False, force=False, toSimplified=False):
 			raise e
 
 def clearUrl(url):
-	if 'weibo' in url:
+	if 'weibo' in url and 'id=' not in url: 
 		index = url.find('?')
 		if index > -1:
 			url = url[:index]
