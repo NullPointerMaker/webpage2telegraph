@@ -7,7 +7,7 @@ import os
 import sys
 
 urls = [
-	'http://www.sixthtone.com/news/1005262/fan-fiction-site-blocked-in-china-after-celebs-stans-complain'
+	'https://www.weibo.com/ttarticle/p/show?id=2309404485259478565112'
 ]
 
 def _test():

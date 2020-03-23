@@ -37,13 +37,18 @@ def _trimWebpage(raw):
 		return raw[:index]
 	return raw
 
-def getContent(url):
-	if not 'card.weibo.com' in url:
-		return cached_url.get(url)
-	index = url.find('?')
+def getWid(url):
+	index = url.find('&')
 	if index != -1:
 		url = url[:index]
-	wid = url.split('/')[-1]
+	if 'id=' in url:
+		return url[url.find('id=') + 3:]
+	return url.split('/')[-1]
+
+def getContent(url):
+	if not 'weibo.com' in url:
+		return cached_url.get(url)
+	wid = getWid(url)
 	new_url = 'https://card.weibo.com/article/m/aj/detail?id=' + wid + '&_t=' + str(int(time.time()))
 	json = yaml.load(cached_url.get(new_url, headers={'referer': url}), Loader=yaml.FullLoader)
 	return '<div><title>%s</title>%s</div>' % (json['data']['title'], json['data']['content'])
