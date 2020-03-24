@@ -87,6 +87,7 @@ def _isEditable(p, url):
 
 def export(url, throw_exception=False, force=False, toSimplified=False):
 	try:
+		url = clearUrl(url)
 		if not force and not isConfidentUrl(url):
 			return
 		p = _getPoster()

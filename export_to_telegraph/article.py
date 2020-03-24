@@ -64,7 +64,7 @@ def _getArticle(url, toSimplified=False):
 	article = _Article(
 		_findTitle(soup, doc), 
 		_findAuthor(soup), 
-		readee.export(url, content=content, list_replace=True, move_head_photo=True, 
+		readee.export(url, content=content, list_replace=True, 
 			toSimplified=toSimplified),
 		article_url)
 	if toSimplified:
