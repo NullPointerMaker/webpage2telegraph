@@ -49,12 +49,9 @@ def getContentFromAlbum(r):
 def getContent(url):
 	if 'weibo.c' in url:
 		wid = getWid(url)
-		wid = '2309404484832922042566'
 		if matchKey(url, ['card', 'ttarticle']):
 			new_url = 'https://card.weibo.com/article/m/aj/detail?id=' + wid + '&_t=' + str(int(time.time()))
 			json = yaml.load(cached_url.get(new_url, headers={'referer': url}), Loader=yaml.FullLoader)
-			with open ('tmp/json.txt', 'w') as f:
-				f.write(str(json))
 			return '<div><title>%s</title>%s</div>' % (json['data']['title'], json['data']['content'])
 		return getContentFromAlbum(weibo_2_album.get(url))
 	return cached_url.get(url)
