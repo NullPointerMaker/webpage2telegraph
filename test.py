@@ -7,7 +7,7 @@ import os
 import sys
 
 urls = [
-	'https://theinitium.com/article/20200329-international-covid19-eurasia-southeasternasia-africa-news/',
+	'https://card.weibo.com/article/h5/s#cid=2309404484832922042566&vid=1352220641',
 ]
 
 def _test():

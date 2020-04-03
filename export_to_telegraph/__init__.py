@@ -126,6 +126,6 @@ def exportAllInText(soup):
 		url = link['title']
 		url = clearUrl(export(url) or url)
 		if '_' in url:
-			url = '(%s)[%s]' % (url, url)
+			url = '[%s](%s)' % (url, url)
 		quote = quote.replace(link['href'], ' ' + url + ' ')
 	return escapeMarkdown(quote)
