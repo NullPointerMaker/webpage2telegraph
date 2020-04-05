@@ -7,7 +7,7 @@ import os
 import sys
 
 urls = [
-	'https://card.weibo.com/article/h5/s#cid=2309404484832922042566&vid=1352220641',
+	'https://www.thepaper.cn/newsDetail_forward_1663700'
 ]
 
 def _test():
