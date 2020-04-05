@@ -22,6 +22,7 @@ def _cleanupRawTitle(raw):
 def _yieldPossibleTitleItem(soup):
 	yield soup.find("meta", {"property": "twitter:title"})
 	yield soup.find("meta", {"name": "twitter:title"})
+	yield soup.find("h1", class_='news_title')
 	yield soup.find("title")
 	yield soup.find("h1")
 	yield soup.find("h2")

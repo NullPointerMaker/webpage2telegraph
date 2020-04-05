@@ -20,6 +20,8 @@ def _yieldPossibleAuthorItem(soup):
 	for item in soup.find_all('meta'):
 		if 'author' in getAttrString(item.attrs):
 			yield item
+	for item in soup.find_all('div', class_='news_about'):
+		yield item.find('p')
 	yield soup.find("a", {"id" : "js_name"})
 		
 def _yieldPossibleOrgItem(soup):
