@@ -7,7 +7,7 @@ import os
 import sys
 
 urls = [
-	'https://www.thepaper.cn/newsDetail_forward_1663700'
+	'https://www.douban.com/people/81925892/status/2904004419/'
 ]
 
 def _test():
