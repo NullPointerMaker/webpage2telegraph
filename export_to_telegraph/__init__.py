@@ -121,11 +121,14 @@ def exportAllInText(soup):
 	if not soup:
 		return ''
 	text = str(soup).replace('<br/>', '\n')
-	quote = BeautifulSoup(text, features='lxml').text.strip()
+	quote = BeautifulSoup(text, features='lxml').get_text(separator='\n').strip()
 	for link in soup.find_all('a', title=True, href=True):
 		url = link['title']
 		url = clearUrl(export(url) or url)
 		if '_' in url:
 			url = '[%s](%s)' % (url, url)
 		quote = quote.replace(link['href'], ' ' + url + ' ')
+	for link in soup.find_all('a', title=False, href=True):
+		if link['href'] == link.text:
+			quote.replace(link.text, ' ' + link.text + ' ') 
 	return escapeMarkdown(quote)
