@@ -121,7 +121,7 @@ def exportAllInText(soup):
 	if not soup:
 		return ''
 	text = str(soup).replace('<br/>', '\n')
-	quote = BeautifulSoup(text, features='lxml').get_text(separator=' ').strip()
+	quote = BeautifulSoup(text, features='lxml').text.strip()
 	for link in soup.find_all('a', title=True, href=True):
 		url = link['title']
 		url = clearUrl(export(url) or url)
