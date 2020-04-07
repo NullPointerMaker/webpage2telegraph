@@ -117,6 +117,8 @@ def export(url, throw_exception=False, force=False, toSimplified=False):
 		if throw_exception:
 			raise e
 
+# TODO: may be remove this to another util? I don't want telegram util be 
+# depends on export to telegraph, that's why this util function is here...
 def exportAllInText(soup):
 	if not soup:
 		return ''
