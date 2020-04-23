@@ -8,14 +8,11 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
+	'https://telegra.ph/%E8%A8%98%E8%80%85%E6%89%8B%E8%A8%98%E8%AA%B0%E9%82%84%E6%B2%92%E6%94%B6%E5%88%B0%E7%BE%8E%E5%9C%8B%E6%94%BF%E5%BA%9C%E7%99%BC%E4%BE%86%E7%9A%84%E7%B4%86%E5%9B%B0%E9%87%91-04-23',
 ]
 
 s = '''
-<blockquote>
-<p>【经典老片中字洗版】《#<a href="https://www.douban.com/update/topic/影子部队">影子部队</a>#》（1969）
-#<a href="https://www.douban.com/update/topic/让·皮埃尔·梅尔维尔">让·皮埃尔·梅尔维尔</a># 晚期力作，《视与听》影史250佳，关于二战抵抗运动题材的影史最佳之一！
-此前网络上的字幕存在不少漏译、误译，时间轴也存在问题，我已在精校与修订翻译之余一并修正，匹配CC蓝光。</p>
-</blockquote>
+https://telegra.ph/%E8%A8%98%E8%80%85%E6%89%8B%E8%A8%98%E8%AA%B0%E9%82%84%E6%B2%92%E6%94%B6%E5%88%B0%E7%BE%8E%E5%9C%8B%E6%94%BF%E5%BA%9C%E7%99%BC%E4%BE%86%E7%9A%84%E7%B4%86%E5%9B%B0%E9%87%91-04-23 bot_simplify
 '''
 
 def testExportAllInText():
@@ -41,7 +38,7 @@ def testExport():
 
 def test():
 	testExport()
-	testExportAllInText()
+	# testExportAllInText()
 
 if __name__=='__main__':
 	test()
