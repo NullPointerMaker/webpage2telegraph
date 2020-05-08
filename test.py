@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://mp.weixin.qq.com/s?__biz=MzU4ODM5MDA3OA==&amp;mid=2247493516&amp;idx=2&amp;sn=d6dadcd3267539c176025f87ff6d1d7e&amp;chksm=fddf2c5dcaa8a54b03c5d17fcc35fd81b9b1c45696e1a3e856c1712ee45e1c57a9479dad08db&amp;mpshare=1&amp;scene=1&amp;srcid=0427ORTVRydVaOV2P64wsa5K&amp;sharer_sharetime=1587979114512&amp;sharer_shareid=be2d6afe3d0ef6294408673c30c94f31#rd'
+	'https://mp.weixin.qq.com/s?__biz=MzIzMTg5MjM2Nw==&amp;mid=2247593091&amp;idx=1&amp;sn=574bdd2d8c91756fa2370a42df0412fa&amp;chksm=e89e1863dfe991759334dc739d9dd8af33cae8977dcc787f4fb8697be810b4a83b997dff4ddf&amp;mpshare=1&amp;scene=1&amp;srcid=&amp;sharer_sharetime=1588263675257&amp;sharer_shareid=ac6cbafa374000428a0e58fcfb7c4b29#rd'
 ]
 
 s = '''
@@ -29,7 +29,7 @@ def testExport():
 		if not mode in url:
 			continue
 		print('原文：', url)
-		r = export(url, True, True, False)
+		r = export(url, True, True, True)
 		print('导出：', r)
 		if 'open' in str(sys.argv):
 			os.system('open ' + _formaturl(r) + ' -g')
