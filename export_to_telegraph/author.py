@@ -23,6 +23,7 @@ def _yieldPossibleAuthorItem(soup):
 	for item in soup.find_all('div', class_='news_about'):
 		yield item.find('p')
 	yield soup.find("a", {"id" : "js_name"})
+	yield soup.find('a', class_='author-url')
 		
 def _yieldPossibleOrgItem(soup):
 	yield soup.find("meta", {"property": "twitter:site"})

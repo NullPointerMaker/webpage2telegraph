@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://mp.weixin.qq.com/s?__biz=MzIzMTg5MjM2Nw==&amp;mid=2247593091&amp;idx=1&amp;sn=574bdd2d8c91756fa2370a42df0412fa&amp;chksm=e89e1863dfe991759334dc739d9dd8af33cae8977dcc787f4fb8697be810b4a83b997dff4ddf&amp;mpshare=1&amp;scene=1&amp;srcid=&amp;sharer_sharetime=1588263675257&amp;sharer_shareid=ac6cbafa374000428a0e58fcfb7c4b29#rd'
+	'https://www.unitas.me/?p=13674'
 ]
 
 s = '''
