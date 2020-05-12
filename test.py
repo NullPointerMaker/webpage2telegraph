@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://www.unitas.me/?p=13674'
+	'https://www.unitas.me/?p=14152'
 ]
 
 s = '''

@@ -9,12 +9,14 @@ from .author import _findAuthor
 import hashlib
 import readee
 import sys
-from hanziconv import HanziConv
+from opencc import OpenCC
 import cached_url
 import time
 import yaml
 from telegram_util import matchKey, getWid
 import weibo_2_album
+
+cc = OpenCC('tw2sp')
 
 class _Article(object):
 	def __init__(self, title, author, text, url = None):
@@ -68,6 +70,6 @@ def _getArticle(url, toSimplified=False):
 			toSimplified=toSimplified),
 		article_url)
 	if toSimplified:
-		article.title = HanziConv.toSimplified(article.title)
-		article.author = HanziConv.toSimplified(article.author)
+		article.title = cc.convert(article.title)
+		article.author = cc.convert(article.author)
 	return article

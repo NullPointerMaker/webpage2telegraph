@@ -24,7 +24,7 @@ setuptools.setup(
         'readability-lxml',
         'telegram_util',
         'readee',
-        'hanziconv',
+        'opencc-python-reimplemented',
         'cached_url',
         'weibo_2_album',
     ],
