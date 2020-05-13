@@ -31,9 +31,9 @@ def _formaturl(url):
 		return "https://" + url
 	return url
 
-def getArticle(url, throw_exception=False, toSimplified=False):
+def getArticle(url, throw_exception=False, toSimplified=False, force_cache=False):
 	try:
-		return _getArticle(_formaturl(url), toSimplified=toSimplified)
+		return _getArticle(_formaturl(url), toSimplified=toSimplified, force_cache=force_cache)
 	except Exception as e:
 		if throw_exception:
 			raise e
