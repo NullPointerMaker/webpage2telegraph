@@ -85,7 +85,7 @@ def _isEditable(p, url):
 	# seems telegra.ph api stop to return the can_edit field, use confidenturl heuristics instead
 	return isConfidentUrl(r.get('author_url')) 
 
-def export(url, throw_exception=False, force=False, toSimplified=False):
+def export(url, throw_exception=False, force=False, toSimplified=False, force_cache=False):
 	try:
 		url = clearUrl(url)
 		if not force and not isConfidentUrl(url):
@@ -93,7 +93,7 @@ def export(url, throw_exception=False, force=False, toSimplified=False):
 		p = _getPoster()
 		if not force and _isEditable(p, url):
 			return url
-		article = getArticle(url, throw_exception, toSimplified=toSimplified)
+		article = getArticle(url, throw_exception, toSimplified=toSimplified, force_cache = force_cache)
 		if not article.text or not article.text.text.strip():
 			article.text = '<div>TO BE ADDED</div>'
 		try:

@@ -48,18 +48,19 @@ def getContentFromAlbum(r):
 	return '<div><title>%s</title>%s%s</div>' % \
 		(r.title, r.cap_html, ''.join(result))
 
-def getContent(url):
+def getContent(url, force_cache=False):
 	if 'weibo.c' in url:
 		wid = getWid(url)
 		if matchKey(url, ['card', 'ttarticle']):
 			new_url = 'https://card.weibo.com/article/m/aj/detail?id=' + wid + '&_t=' + str(int(time.time()))
-			json = yaml.load(cached_url.get(new_url, headers={'referer': url}), Loader=yaml.FullLoader)
+			json = yaml.load(cached_url.get(new_url, 
+				headers={'referer': url}, force_cache = force_cache), Loader=yaml.FullLoader)
 			return '<div><title>%s</title>%s</div>' % (json['data']['title'], json['data']['content'])
 		return getContentFromAlbum(weibo_2_album.get(url))
-	return cached_url.get(url)
+	return cached_url.get(url, force_cache=force_cache)
 	
-def _getArticle(url, toSimplified=False):
-	content = getContent(url)
+def _getArticle(url, toSimplified=False, force_cache=False):
+	content = getContent(url, force_cache=force_cache)
 	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
 	article_url = _findUrl(url, soup)
 	doc = Document(content)
