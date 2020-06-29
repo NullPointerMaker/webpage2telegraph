@@ -24,9 +24,11 @@ def _yieldPossibleTitleItem(soup):
 	yield soup.find("meta", {"name": "twitter:title"})
 	yield soup.find("h1", class_='single-post-title')
 	yield soup.find("h1", class_='news_title')
+	yield soup.find("h1", class_='entry-title')
 	yield soup.find("title")
 	yield soup.find("h1")
 	yield soup.find("h2")
+
 	for item in soup.find_all('meta'):
 		if 'title' in str(item.attrs):
 			yield item
