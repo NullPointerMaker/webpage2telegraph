@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://squatting2047.com/%e3%80%8c%e4%b8%8d%e7%ae%a1%e4%bd%a0%e6%98%af%e5%90%a6%e5%8f%ab%e6%88%91%e5%80%91%e5%81%9a%e9%a6%99%e6%b8%af%e4%ba%ba%ef%bc%8c%e6%88%91%e5%80%91%e9%83%bd%e6%98%af%e9%a6%99%e6%b8%af%e7%9a%84%e4%b8%80'
+	'https://catalystmagazine.net/this-time-they-can-see-our-pain'
 ]
 
 s = '''
