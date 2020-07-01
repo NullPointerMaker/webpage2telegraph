@@ -26,6 +26,9 @@ def _yieldPossibleAuthorItem(soup):
 	yield soup.find('a', class_='author-url')
 	yield soup.find('span', class_='posted-date')
 	yield soup.find('a', class_='name')
+	for item in soup.find_all('a'):
+		if 'author' in getAttrString(item.attrs):
+			yield item
 		
 def _yieldPossibleOrgItem(soup):
 	yield soup.find("meta", {"property": "twitter:site"})
