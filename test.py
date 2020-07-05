@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import export_to_telegraph
-from export_to_telegraph import export, _formaturl, exportAllInText
+from export_to_telegraph import export, _formaturl, exportAllInText, getTitle
 import os
 import sys
 from bs4 import BeautifulSoup

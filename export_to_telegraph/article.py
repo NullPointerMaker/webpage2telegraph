@@ -58,6 +58,12 @@ def getContent(url, force_cache=False):
 			return '<div><title>%s</title>%s</div>' % (json['data']['title'], json['data']['content'])
 		return getContentFromAlbum(weibo_2_album.get(url))
 	return cached_url.get(url, force_cache=force_cache)
+
+def getTitle(url, force_cache=True):
+	content = getContent(url, force_cache=force_cache)
+	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
+	doc = Document(content)
+	return _findTitle(soup, doc)
 	
 def _getArticle(url, toSimplified=False, force_cache=False):
 	content = getContent(url, force_cache=force_cache)
