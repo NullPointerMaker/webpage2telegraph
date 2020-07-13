@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://nacla.org/news/2020/06/09/dismantling-anti-blackness-together'
+	'https://opinion.cw.com.tw/blog/profile/52/article/9643'
 ]
 
 s = '''
