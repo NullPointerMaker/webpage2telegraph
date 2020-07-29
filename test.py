@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://mp.weixin.qq.com/s/Rgx5IIHhep6pTgA57OkMjg'
+	'https://opinion.udn.com/opinion/story/6685/4666519'
 ]
 
 s = '''
