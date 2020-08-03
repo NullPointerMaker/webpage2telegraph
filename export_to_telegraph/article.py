@@ -64,6 +64,11 @@ def getTitle(url, force_cache=True):
 	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
 	doc = Document(content)
 	return _findTitle(soup, doc)
+
+def getAuthor(url, force_cache=True):
+	content = getContent(url, force_cache=force_cache)
+	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
+	return _findAuthor(soup)
 	
 def _getArticle(url, toSimplified=False, force_cache=False):
 	content = getContent(url, force_cache=force_cache)
