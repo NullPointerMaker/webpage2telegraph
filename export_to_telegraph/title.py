@@ -25,6 +25,7 @@ def _yieldPossibleTitleItem(soup):
 	yield soup.find("h1", class_='single-post-title')
 	yield soup.find("h1", class_='news_title')
 	yield soup.find("h1", class_='entry-title')
+	yield soup.find('table', class_='infobox')
 	yield soup.find("h1", class_='title')
 	yield soup.find("h1", class_='story_art_title')
 	yield soup.find("title")

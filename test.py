@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://mp.weixin.qq.com/s/DRUSUwYhEVgQ5SigoKTEMQ?url=https%3A%2F%2Fmp.weixin.qq.com%2Fs%2FDRUSUwYhEVgQ5SigoKTEMQ&share_menu=1&sinainternalbrowser=topnav&mid=4532361255722252&luicode=10000011&lfid=1076033524285233&u=https%3A%2F%2Fmp.weixin.qq.com%2Fs%2FDRUSUwYhEVgQ5SigoKTEMQ'
+	'http://www.douban.com/doubanapp/dispatch?uri=/group/topic/167629187&dt_dapp=1'
 ]
 
 s = '''
@@ -20,11 +20,12 @@ def testExportAllInText():
 
 def testExport():
 	for url in urls:
-		print('原文：', url)
-		r = export(url, True, True, True)
-		print('导出：', r)
-		os.system('open ' + _formaturl(r) + ' -g')
-		print('')
+		print(export_to_telegraph.getTitle(url))
+		# print('原文：', url)
+		# r = export(url, True, True, True)
+		# print('导出：', r)
+		# os.system('open ' + _formaturl(r) + ' -g')
+		# print('')
 
 def test():
 	testExport()
