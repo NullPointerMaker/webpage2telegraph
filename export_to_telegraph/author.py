@@ -29,7 +29,10 @@ def _yieldPossibleAuthorItem(soup):
 	yield soup.find('div', class_='article-author')
 	yield soup.find("meta", {"name": "application-name"})
 	for item in soup.find_all('a'):
-		if matchKey(getAttrString(item.attrs), ['author', '/people/']):
+		if matchKey(getAttrString(item.attrs), ['author']):
+			yield item
+	for item in soup.find_all('a'):
+		if matchKey(getAttrString(item.attrs), ['/people/']):
 			yield item
 		
 def _yieldPossibleOrgItem(soup):

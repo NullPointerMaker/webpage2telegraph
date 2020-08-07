@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'http://www.douban.com/doubanapp/dispatch?uri=/group/topic/167629187&dt_dapp=1'
+	'https://www.washingtonpost.com/education/2020/08/06/georgia-teens-shared-photos-maskless-students-crowded-hallways-now-theyre-suspended'
 ]
 
 s = '''
