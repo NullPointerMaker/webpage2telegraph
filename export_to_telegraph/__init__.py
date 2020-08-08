@@ -109,6 +109,12 @@ def export(url, throw_exception=False, force=False, toSimplified=False, force_ca
 					author = article.author, 
 					author_url = _formaturl(article.url or url), 
 					text = '<div>TO BE ADDED</div>')
+			elif 'ACCESS_TOKEN_INVALID' in str(e):
+				r = TelegraphPoster().post(
+					title = article.title, 
+					author = article.author, 
+					author_url = _formaturl(article.url or url), 
+					text = str(article.text))
 			else:
 				raise e
 		if force or isConfident(url, article.text):
