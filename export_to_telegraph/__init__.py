@@ -90,6 +90,11 @@ def getAuthorUrl(article, url, noSourceLink):
 		return ''
 	return _formaturl(article.url or url)
 
+def getAuthorField(author, noSourceLink):
+	if author == 'Source' and noSourceLink:
+		return ''
+	return author
+
 def export(url, throw_exception=False, force=False, toSimplified=False, force_cache=False, noSourceLink=False):
 	try:
 		url = clearUrl(url)
@@ -104,20 +109,20 @@ def export(url, throw_exception=False, force=False, toSimplified=False, force_ca
 		try:
 			r = p.post(
 				title = article.title, 
-				author = article.author, 
+				author = getAuthorField(article.author, noSourceLink),
 				author_url = getAuthorUrl(article, url, noSourceLink), 
 				text = str(article.text))
 		except Exception as e:
 			if 'CONTENT_TEXT_REQUIRED' in str(e):
 				r = p.post(
 					title = article.title, 
-					author = article.author, 
+					author = getAuthorField(article.author, noSourceLink),
 					author_url = getAuthorUrl(article, url, noSourceLink), 
 					text = '<div>TO BE ADDED</div>')
 			elif 'ACCESS_TOKEN_INVALID' in str(e):
 				r = TelegraphPoster().post(
 					title = article.title, 
-					author = article.author, 
+					author = getAuthorField(article.author, noSourceLink), 
 					author_url = getAuthorUrl(article, url, noSourceLink), 
 					text = str(article.text))
 			else:
