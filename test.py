@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://www.washingtonpost.com/education/2020/08/06/georgia-teens-shared-photos-maskless-students-crowded-hallways-now-theyre-suspended'
+	'http://cnpolitics.org/2020/07/active-defense-chinas-military-strategy-since-1949/'
 ]
 
 s = '''
@@ -20,9 +20,9 @@ def testExportAllInText():
 
 def testExport():
 	for url in urls:
-		print(export_to_telegraph.getAuthor(url))
+		print(export_to_telegraph.getTitle(url))
 		# print('原文：', url)
-		# r = export(url, True, True, True)
+		# r = export_to_telegraph.export(url, True, True, True)
 		# print('导出：', r)
 		# os.system('open ' + _formaturl(r) + ' -g')
 		# print('')
