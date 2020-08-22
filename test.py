@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://www.jianshu.com/p/6f6f00077274'
+	'https://daily.zhihu.com/story/9727099?utm_campaign=in_app_share&utm_medium=iOS&utm_source=copy'
 ]
 
 s = '''
@@ -20,12 +20,12 @@ def testExportAllInText():
 
 def testExport():
 	for url in urls:
-		# print(export_to_telegraph.export(url, force=True))
-		print('原文：', url)
-		r = export_to_telegraph.export(url, True, True, True)
-		print('导出：', r)
-		os.system('open ' + _formaturl(r) + ' -g')
-		print('')
+		print(export_to_telegraph.getTitle(url))
+		# print('原文：', url)
+		# r = export_to_telegraph.export(url, True, True, True)
+		# print('导出：', r)
+		# os.system('open ' + _formaturl(r) + ' -g')
+		# print('')
 
 def test():
 	testExport()
