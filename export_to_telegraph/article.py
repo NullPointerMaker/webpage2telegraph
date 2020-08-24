@@ -60,10 +60,13 @@ def getContent(url, force_cache=False):
 	return cached_url.get(url, force_cache=force_cache)
 
 def getTitle(url, force_cache=True):
-	content = getContent(url, force_cache=force_cache)
-	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
-	doc = Document(content)
-	return _findTitle(soup, doc)
+	try:
+		content = getContent(url, force_cache=force_cache)
+		soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
+		doc = Document(content)
+		return _findTitle(soup, doc)
+	except:
+		return 'No Title'
 
 def getAuthor(url, force_cache=True):
 	content = getContent(url, force_cache=force_cache)
