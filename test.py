@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://daily.zhihu.com/story/9727099?utm_campaign=in_app_share&utm_medium=iOS&utm_source=copy'
+	'http://dikaioslin.blogspot.com/2020/07/identity-intersectionality.html'
 ]
 
 s = '''
