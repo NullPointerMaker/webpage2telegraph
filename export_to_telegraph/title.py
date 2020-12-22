@@ -10,6 +10,7 @@ def _similar(p, mediaNames):
 	return any([_similarSingle(p, m) for m in mediaNames])
 
 def _cleanupRawTitle(raw):
+	raw = raw.strip('BBC Learning English - ')
 	mediaNames = ['nyt', 'new york times', 'stackoverflow', 'bbc', 'opinion']
 	index = raw.rfind('- ')
 	if index != -1:

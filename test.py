@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'http://dikaioslin.blogspot.com/2020/07/identity-intersectionality.html'
+	'https://www.bbc.co.uk/learningenglish/chinese/features/authentic-real-english/ep-201222'
 ]
 
 s = '''
