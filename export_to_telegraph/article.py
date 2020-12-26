@@ -59,7 +59,7 @@ def getContent(url, force_cache=False):
 		return getContentFromAlbum(weibo_2_album.get(url))
 	return cached_url.get(url, force_cache=force_cache)
 
-def getTitle(url, force_cache=True, toSimplified = Falses):
+def getTitle(url, force_cache=True, toSimplified = False):
 	try:
 		content = getContent(url, force_cache=force_cache)
 		soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
