@@ -20,12 +20,12 @@ def testExportAllInText():
 
 def testExport():
 	for url in urls:
-		print(export_to_telegraph.getTitle(url))
-		# print('原文：', url)
-		# r = export_to_telegraph.export(url, True, True, True)
-		# print('导出：', r)
-		# os.system('open ' + _formaturl(r) + ' -g')
-		# print('')
+		# print(export_to_telegraph.getTitle(url))
+		print('原文：', url)
+		r = export_to_telegraph.export(url, True, True, True)
+		print('导出：', r)
+		os.system('open ' + _formaturl(r) + ' -g')
+		print('')
 
 def test():
 	testExport()
