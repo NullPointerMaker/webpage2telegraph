@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://www.bbc.com/news/uk-55449596'
+	'https://www.twreporter.org/a/american-ractopamine-pork-import-legislation'
 ]
 
 s = '''
