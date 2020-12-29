@@ -57,6 +57,8 @@ def getContent(url, force_cache=False):
 				headers={'referer': url}, force_cache = force_cache), Loader=yaml.FullLoader)
 			return '<div><title>%s</title>%s</div>' % (json['data']['title'], json['data']['content'])
 		return getContentFromAlbum(weibo_2_album.get(url))
+	if 'photos.google.com/share' in url:
+		getContentFromAlbum(gphoto_2_album.get(url))
 	return cached_url.get(url, force_cache=force_cache)
 
 def getTitle(url, force_cache=True, toSimplified = False):

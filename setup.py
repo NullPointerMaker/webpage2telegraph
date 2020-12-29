@@ -27,6 +27,7 @@ setuptools.setup(
         'opencc-python-reimplemented',
         'cached_url',
         'weibo_2_album',
+        'gphoto_2_album',
     ],
     python_requires='>=3.0',
 )
