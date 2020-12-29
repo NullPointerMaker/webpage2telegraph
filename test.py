@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://www.twreporter.org/a/american-ractopamine-pork-import-legislation'
+	'https://photos.google.com/share/AF1QipOtOHHWLLtS9RV6yMuIpT9qpUSnoAv2tRg9OpEH27wkf39qU-cRTpn9uJGOd_FTpw?key=a0k1NHNoYmdvY256Y2oyVWd3aXV1TlNJOUk4Wjl3'
 ]
 
 s = '''

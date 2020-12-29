@@ -15,6 +15,7 @@ import time
 import yaml
 from telegram_util import matchKey, getWid
 import weibo_2_album
+import gphoto_2_album
 
 cc = OpenCC('tw2sp')
 
@@ -41,10 +42,12 @@ def _trimWebpage(raw):
 		return raw[:index]
 	return raw
 
-def getContentFromAlbum(r):
+def getContentFromAlbum(r, noText=False):
 	result = []
 	for url in r.imgs:
 		result.append('<img src="%s" />' % url)
+	if noText: 
+		return '<div><title>%s</title>%s</div>' % (r.title, ''.join(result))
 	return '<div><title>%s</title>%s%s</div>' % \
 		(r.title, r.cap_html, ''.join(result))
 
@@ -58,7 +61,7 @@ def getContent(url, force_cache=False):
 			return '<div><title>%s</title>%s</div>' % (json['data']['title'], json['data']['content'])
 		return getContentFromAlbum(weibo_2_album.get(url))
 	if 'photos.google.com/share' in url:
-		getContentFromAlbum(gphoto_2_album.get(url))
+		return getContentFromAlbum(gphoto_2_album.get(url), noText=True)
 	return cached_url.get(url, force_cache=force_cache)
 
 def getTitle(url, force_cache=True, toSimplified = False):
