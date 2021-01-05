@@ -97,7 +97,6 @@ def getAuthorField(author, noSourceLink):
 
 def export(url, throw_exception=False, force=False, toSimplified=False, force_cache=False, noSourceLink=False):
 	try:
-		url = clearUrl(url)
 		if not force and not isConfidentUrl(url):
 			return
 		p = _getPoster()
