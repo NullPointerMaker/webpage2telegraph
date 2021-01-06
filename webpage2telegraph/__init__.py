@@ -97,8 +97,6 @@ def getAuthorField(author, source):
 
 def transfer(url, throw_exception=False, force=False, simplify=False, force_cache=False, source=False):
 	try:
-		if not force and not is_confident_url(url):
-			return
 		p = _get_poster()
 		if not force and _is_editable(p, url):
 			return url
