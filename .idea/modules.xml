@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../telegram_cn_archive_bot/.idea/telegram_cn_archive_bot.iml" filepath="$PROJECT_DIR$/../telegram_cn_archive_bot/.idea/telegram_cn_archive_bot.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/webpage2telegraph.iml" filepath="$PROJECT_DIR$/.idea/webpage2telegraph.iml" />
     </modules>
   </component>
