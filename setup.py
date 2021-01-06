@@ -10,7 +10,7 @@ setuptools.setup(
 	description="Library for transfer webpage to Telegraph archive.",
 	long_description=long_description,
 	long_description_content_type="text/markdown",
-	url="https://github.com/NullPointerMaker/webpage_to_telegraph",
+	url="https://github.com/NullPointerMaker/webpage2telegraph",
 	packages=setuptools.find_packages(),
 	classifiers=[
 		"Programming Language :: Python :: 3",
