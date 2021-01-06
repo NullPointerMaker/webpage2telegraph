@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from bs4 import BeautifulSoup
-
-def _findRawContent(item):
+def _find_raw_content(item):
 	if item.has_attr('content'):
 		title = item['content'].strip()
 		if title:
 			return title
 	return item.text.strip()
+
 
 def _seems_valid_text(soup, limit=500):
 	if not soup:

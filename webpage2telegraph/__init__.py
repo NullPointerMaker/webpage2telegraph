@@ -5,7 +5,7 @@ name = 'webpage2telegraph'
 token = ''
 
 from html_telegraph_poster import TelegraphPoster
-from .article import _getArticle, getTitle, getAuthor
+from .article import _get_article, get_title, get_author
 from .common import _seems_valid_text
 from bs4 import BeautifulSoup
 from telegram_util import escapeMarkdown, clearUrl
@@ -36,7 +36,7 @@ def _format_url(url):
 
 def get_article(url, throw_exception=False, simplify=False, force_cache=False):
 	try:
-		return _getArticle(_format_url(url), simplify=simplify, force_cache=force_cache)
+		return _get_article(_format_url(url), simplify=simplify, force_cache=force_cache)
 	except Exception as e:
 		if throw_exception:
 			raise e

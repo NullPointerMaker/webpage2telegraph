@@ -2,9 +2,8 @@
 # -*- coding: utf-8 -*-
 
 import webpage2telegraph
-from webpage2telegraph import transfer, _format_url, transfer_all_in_text, getTitle
+from webpage2telegraph import transfer, _format_url, transfer_all_in_text
 import os
-import sys
 from bs4 import BeautifulSoup
 
 urls = [
@@ -14,22 +13,27 @@ urls = [
 s = '''
 '''
 
+
 def testExportAllInText():
 	soup = BeautifulSoup(s, features="lxml")
 	print(transfer_all_in_text(soup))
 
+
 def testExport():
 	for url in urls:
-		# print(webpage2telegraph.getTitle(url))
+		# print(webpage2telegraph.get_title(url))
 		print('原文：', url)
 		r = webpage2telegraph.transfer(url, True, True, True)
 		print('导出：', r)
 		os.system('open ' + _format_url(r) + ' -g')
 		print('')
 
+
 def test():
 	testExport()
-	# testExportAllInText()
 
-if __name__=='__main__':
+
+# testExportAllInText()
+
+if __name__ == '__main__':
 	test()

@@ -1,32 +1,33 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import requests
-from bs4 import BeautifulSoup
-from readability import Document
-from .title import _findTitle
-from .author import _findAuthor
-import hashlib
-import readee
-import sys
-from opencc import OpenCC
-import cached_url
 import time
-import yaml
-from telegram_util import matchKey, getWid
-import weibo_2_album
+
+import cached_url
 import gphoto_2_album
+import readee
+import weibo_2_album
+import yaml
+from bs4 import BeautifulSoup
+from opencc import OpenCC
+from readability import Document
+from telegram_util import matchKey, getWid
+
+from .author import _find_author
+from .title import _find_title
 
 cc = OpenCC('tw2sp')
 
+
 class _Article(object):
-	def __init__(self, title, author, text, url = None):
+	def __init__(self, title, author, text, url=None):
 		self.title = title
 		self.author = author
 		self.text = text
 		self.url = url
 
-def _findUrl(url, soup):
+
+def _find_url(url, soup):
 	if 'telegra.ph' not in url:
 		return
 	address = soup.find('address')
@@ -35,62 +36,65 @@ def _findUrl(url, soup):
 	link = address.find('a')
 	return link and link.get('href')
 
-def _trimWebpage(raw):
+
+def _trim_webpage(raw):
 	anchor = '<!-- detail_toolbox -->'
 	index = raw.find(anchor)
 	if index != -1:
 		return raw[:index]
 	return raw
 
-def getContentFromAlbum(r, noText=False):
+
+def get_content_from_album(r, no_text=False):
 	result = []
 	for url in r.imgs:
 		result.append('<img src="%s" />' % url)
-	if noText: 
+	if no_text:
 		return '<div><title>%s</title>%s</div>' % (r.title, ''.join(result))
-	return '<div><title>%s</title>%s%s</div>' % \
-		(r.title, r.cap_html, ''.join(result))
+	return '<div><title>%s</title>%s%s</div>' % (r.title, r.cap_html, ''.join(result))
 
-def getContent(url, force_cache=False):
+
+def get_content(url, force_cache=False):
 	if 'weibo.c' in url:
 		wid = getWid(url)
 		if matchKey(url, ['card', 'ttarticle']):
 			new_url = 'https://card.weibo.com/article/m/aj/detail?id=' + wid + '&_t=' + str(int(time.time()))
-			json = yaml.load(cached_url.get(new_url, 
-				headers={'referer': url}, force_cache = force_cache), Loader=yaml.FullLoader)
+			json = yaml.load(cached_url.get(new_url, headers={'referer': url}, force_cache=force_cache), Loader=yaml.FullLoader)
 			return '<div><title>%s</title>%s</div>' % (json['data']['title'], json['data']['content'])
-		return getContentFromAlbum(weibo_2_album.get(url))
+		return get_content_from_album(weibo_2_album.get(url))
 	if 'photos.google.com/share' in url:
-		return getContentFromAlbum(gphoto_2_album.get(url), noText=True)
+		return get_content_from_album(gphoto_2_album.get(url), no_text=True)
 	return cached_url.get(url, force_cache=force_cache)
 
-def getTitle(url, force_cache=True, toSimplified = False):
+
+def get_title(url, force_cache=True, simplify=False):
 	try:
-		content = getContent(url, force_cache=force_cache)
-		soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
+		content = get_content(url, force_cache=force_cache)
+		soup = BeautifulSoup(_trim_webpage(content), 'html.parser')
 		doc = Document(content)
-		title =  _findTitle(soup, doc)
-		if toSimplified:
+		title = _find_title(soup, doc)
+		if simplify:
 			return cc.convert(title)
 		return title
 	except:
 		return 'No Title'
 
-def getAuthor(url, force_cache=True):
-	content = getContent(url, force_cache=force_cache)
-	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
-	return _findAuthor(soup)
-	
-def _getArticle(url, simplify=False, force_cache=False):
-	content = getContent(url, force_cache=force_cache)
-	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
-	article_url = _findUrl(url, soup)
+
+def get_author(url, force_cache=True):
+	content = get_content(url, force_cache=force_cache)
+	soup = BeautifulSoup(_trim_webpage(content), 'html.parser')
+	return _find_author(soup)
+
+
+def _get_article(url, simplify=False, force_cache=False):
+	content = get_content(url, force_cache=force_cache)
+	soup = BeautifulSoup(_trim_webpage(content), 'html.parser')
+	article_url = _find_url(url, soup)
 	doc = Document(content)
 	article = _Article(
-		_findTitle(soup, doc), 
-		_findAuthor(soup), 
-		readee.export(url, content=content, list_replace=True,
-		              toSimplified=simplify),
+		_find_title(soup, doc),
+		_find_author(soup),
+		readee.export(url, content=content, list_replace=True, toSimplified=simplify),
 		article_url)
 	if simplify:
 		article.title = cc.convert(article.title)
