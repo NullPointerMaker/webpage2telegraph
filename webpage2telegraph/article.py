@@ -45,7 +45,7 @@ def _trim_webpage(raw):
 	return raw
 
 
-def get_content_from_album(r, no_text=False):
+def _get_content_from_album(r, no_text=False):
 	result = []
 	for url in r.imgs:
 		result.append('<img src="%s" />' % url)
@@ -54,22 +54,22 @@ def get_content_from_album(r, no_text=False):
 	return '<div><title>%s</title>%s%s</div>' % (r.title, r.cap_html, ''.join(result))
 
 
-def get_content(url, force_cache=False):
+def _get_content(url, force_cache=False):
 	if 'weibo.c' in url:
 		wid = getWid(url)
 		if matchKey(url, ['card', 'ttarticle']):
 			new_url = 'https://card.weibo.com/article/m/aj/detail?id=' + wid + '&_t=' + str(int(time.time()))
 			json = yaml.load(cached_url.get(new_url, headers={'referer': url}, force_cache=force_cache), Loader=yaml.FullLoader)
 			return '<div><title>%s</title>%s</div>' % (json['data']['title'], json['data']['content'])
-		return get_content_from_album(weibo_2_album.get(url))
+		return _get_content_from_album(weibo_2_album.get(url))
 	if 'photos.google.com/share' in url:
-		return get_content_from_album(gphoto_2_album.get(url), no_text=True)
+		return _get_content_from_album(gphoto_2_album.get(url), no_text=True)
 	return cached_url.get(url, force_cache=force_cache)
 
 
-def get_title(url, force_cache=True, simplify=False):
+def _get_title(url, force_cache=True, simplify=False):
 	try:
-		content = get_content(url, force_cache=force_cache)
+		content = _get_content(url, force_cache=force_cache)
 		soup = BeautifulSoup(_trim_webpage(content), 'html.parser')
 		doc = Document(content)
 		title = _find_title(soup, doc)
@@ -80,14 +80,14 @@ def get_title(url, force_cache=True, simplify=False):
 		return 'No Title'
 
 
-def get_author(url, force_cache=True):
-	content = get_content(url, force_cache=force_cache)
+def _get_author(url, force_cache=True):
+	content = _get_content(url, force_cache=force_cache)
 	soup = BeautifulSoup(_trim_webpage(content), 'html.parser')
 	return _find_author(soup)
 
 
-def _get_article(url, simplify=False, force_cache=False):
-	content = get_content(url, force_cache=force_cache)
+def get(url, simplify=False, force_cache=False):
+	content = _get_content(url, force_cache=force_cache)
 	soup = BeautifulSoup(_trim_webpage(content), 'html.parser')
 	article_url = _find_url(url, soup)
 	doc = Document(content)
