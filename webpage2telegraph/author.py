@@ -67,7 +67,7 @@ def _findOrgName(soup):
 	r = _findPossibleRawContent(_yieldPossibleOrgItem(soup))
 	if r:
 		return r, False
-	return 'Source', False
+	return '原文', False
 
 def _findAuthor(soup):
 	author_name = _findPossibleRawContent(

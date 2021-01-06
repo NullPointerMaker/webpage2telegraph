@@ -38,11 +38,11 @@ def get_article(url, throw_exception=False, simplify=False, force_cache=False):
 		if throw_exception:
 			raise e
 
-def isConfidentUrl(url):
+def is_confident_url(url):
 	return matchKey(url, ['mp.weixin.qq.com', 'stackoverflow', 'bbc', 'nyt', 'telegra'])
 
 def isConfident(url, soup):
-	if not isConfidentUrl(url):
+	if not is_confident_url(url):
 		return False
 	if not _seemsValidText(soup):
 		return False
@@ -68,7 +68,7 @@ def get(url):
 	})
 	return r.get('result', {})
 
-def _isEditable(p, url):
+def _is_editable(p, url):
 	path = _getTelegraphPath(url)
 	if not path:
 		return False
@@ -83,7 +83,7 @@ def _isEditable(p, url):
 	if r.get('can_edit'):
 		return True
 	# seems telegra.ph api stop to return the can_edit field, use confidenturl heuristics instead
-	return isConfidentUrl(r.get('author_url')) 
+	return is_confident_url(r.get('author_url'))
 
 def getAuthorUrl(article, url, source):
 	if source:
@@ -91,18 +91,18 @@ def getAuthorUrl(article, url, source):
 	return _format_url(article.url or url)
 
 def getAuthorField(author, source):
-	if author == 'Source' and not source:
+	if author == '原文' and not source:
 		return ''
 	return author
 
 def transfer(url, throw_exception=False, force=False, simplify=False, force_cache=False, source=False):
 	try:
-		if not force and not isConfidentUrl(url):
+		if not force and not is_confident_url(url):
 			return
 		p = _get_poster()
-		if not force and _isEditable(p, url):
+		if not force and _is_editable(p, url):
 			return url
-		article = get_article(url, throw_exception, simplify=simplify, force_cache = force_cache)
+		article = get_article(url, throw_exception, simplify=simplify, force_cache=force_cache)
 		if not article.text or not article.text.text.strip():
 			article.text = '<div>TO BE ADDED</div>'
 		try:
