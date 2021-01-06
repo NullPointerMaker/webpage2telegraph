@@ -61,7 +61,7 @@ def get(url):
 	return r.get('result', {})
 
 def get_author_url(article, url, source):
-	if source:
+	if not source:
 		return ''
 	return _format_url(article.url or url)
 
