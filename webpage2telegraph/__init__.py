@@ -7,7 +7,6 @@ token = ''
 from html_telegraph_poster import TelegraphPoster
 from .article import _getArticle, getTitle, getAuthor
 from .common import _seems_valid_text
-from telegram_util import matchKey
 from bs4 import BeautifulSoup
 from telegram_util import escapeMarkdown, clearUrl
 
@@ -23,7 +22,7 @@ def _get_poster():
 
 
 def _trim_url(url):
-	if not '://' in url:
+	if '://' not in url:
 		return url
 	loc = url.find('://')
 	return url[loc + 3:]
@@ -60,6 +59,7 @@ def get(url):
 	})
 	return r.get('result', {})
 
+
 def get_author_url(article, url, source):
 	if not source:
 		return ''
@@ -76,7 +76,7 @@ def transfer(url, throw_exception=False, source=False, simplify=False, force_cac
 	try:
 		p = _get_poster()
 		article = get_article(url, throw_exception=throw_exception, simplify=simplify, force_cache=force_cache)
-		if not article.text or not article.text.text.strip(): # content is empty
+		if not article.text or not article.text.strip():  # content is empty
 			article.text = '<div>TO BE ADDED</div>'
 		try:
 			r = p.post(
@@ -105,9 +105,8 @@ def transfer(url, throw_exception=False, source=False, simplify=False, force_cac
 			raise e
 
 
-# TODO: may be remove this to another util? I don't want telegram util be
-# depends on transfer to telegraph, that's why this util function is here...
-def exportAllInText(soup):
+# TODO: may be move this to another util? I don't want telegram util be depends on transfer to telegraph, that's why this util function is here...
+def transfer_all_in_text(soup):
 	if not soup:
 		return ''
 	text = str(soup).replace('<br/>', '\n')

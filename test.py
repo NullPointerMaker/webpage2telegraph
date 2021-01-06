@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import webpage2telegraph
-from webpage2telegraph import transfer, _format_url, exportAllInText, getTitle
+from webpage2telegraph import transfer, _format_url, transfer_all_in_text, getTitle
 import os
 import sys
 from bs4 import BeautifulSoup
@@ -16,7 +16,7 @@ s = '''
 
 def testExportAllInText():
 	soup = BeautifulSoup(s, features="lxml")
-	print(exportAllInText(soup))
+	print(transfer_all_in_text(soup))
 
 def testExport():
 	for url in urls:
