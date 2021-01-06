@@ -2,7 +2,7 @@
 
 Library for transfer webpage to Telegraph archive.
 
-## usage
+## Usage
 
 ```
 import webpage_to_telegraph
@@ -12,6 +12,6 @@ telegraph_url = webpage_to_telegraph.transfer(webpage_url)
 
 If transfer failed, `telegraph_url` will be None.
 
-## how to install
+## How to Install
 
 `pip3 install webpage_to_telegraph`
