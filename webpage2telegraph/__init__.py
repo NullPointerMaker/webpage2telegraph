@@ -85,17 +85,17 @@ def _isEditable(p, url):
 	# seems telegra.ph api stop to return the can_edit field, use confidenturl heuristics instead
 	return isConfidentUrl(r.get('author_url')) 
 
-def getAuthorUrl(article, url, noSourceLink):
-	if noSourceLink:
+def getAuthorUrl(article, url, source):
+	if source:
 		return ''
 	return _format_url(article.url or url)
 
-def getAuthorField(author, noSourceLink):
-	if author == 'Source' and noSourceLink:
+def getAuthorField(author, source):
+	if author == 'Source' and not source:
 		return ''
 	return author
 
-def transfer(url, throw_exception=False, force=False, simplify=False, force_cache=False, noSourceLink=False):
+def transfer(url, throw_exception=False, force=False, simplify=False, force_cache=False, source=False):
 	try:
 		if not force and not isConfidentUrl(url):
 			return
@@ -108,21 +108,21 @@ def transfer(url, throw_exception=False, force=False, simplify=False, force_cach
 		try:
 			r = p.post(
 				title = article.title, 
-				author = getAuthorField(article.author, noSourceLink),
-				author_url = getAuthorUrl(article, url, noSourceLink), 
+				author = getAuthorField(article.author, source),
+				author_url = getAuthorUrl(article, url, source),
 				text = str(article.text))
 		except Exception as e:
 			if 'CONTENT_TEXT_REQUIRED' in str(e):
 				r = p.post(
 					title = article.title, 
-					author = getAuthorField(article.author, noSourceLink),
-					author_url = getAuthorUrl(article, url, noSourceLink), 
+					author = getAuthorField(article.author, source),
+					author_url = getAuthorUrl(article, url, source),
 					text = '<div>TO BE ADDED</div>')
 			elif 'ACCESS_TOKEN_INVALID' in str(e):
 				r = TelegraphPoster().post(
 					title = article.title, 
-					author = getAuthorField(article.author, noSourceLink), 
-					author_url = getAuthorUrl(article, url, noSourceLink), 
+					author = getAuthorField(article.author, source),
+					author_url = getAuthorUrl(article, url, source),
 					text = str(article.text))
 			else:
 				raise e
