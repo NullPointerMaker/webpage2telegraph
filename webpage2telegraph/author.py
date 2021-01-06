@@ -5,7 +5,7 @@ from .common import _find_raw_content
 from telegram_util import matchKey
 
 
-def get_attr_string(attrs):
+def _get_attr_string(attrs):
 	if not attrs:
 		return ''
 	r = []
@@ -20,7 +20,7 @@ def _yield_possible_author_item(soup):
 	yield soup.find("meta", {"name": "byl"})
 	yield soup.find("span", {"class": "byline__name"})
 	for item in soup.find_all('meta'):
-		if 'author' in get_attr_string(item.attrs):
+		if 'author' in _get_attr_string(item.attrs):
 			yield item
 	for item in soup.find_all('div', class_='news_about'):
 		yield item.find('p')
@@ -31,10 +31,10 @@ def _yield_possible_author_item(soup):
 	yield soup.find('div', class_='article-author')
 	yield soup.find("meta", {"name": "application-name"})
 	for item in soup.find_all('a'):
-		if matchKey(get_attr_string(item.attrs), ['author']):
+		if matchKey(_get_attr_string(item.attrs), ['author']):
 			yield item
 	for item in soup.find_all('a'):
-		if matchKey(get_attr_string(item.attrs), ['/people/']):
+		if matchKey(_get_attr_string(item.attrs), ['/people/']):
 			yield item
 
 

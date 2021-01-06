@@ -3,10 +3,10 @@
 
 import time
 
-import cached_url
 import gphoto_2_album
-import readee
 import weibo_2_album
+import cached_url
+import readee
 import yaml
 from bs4 import BeautifulSoup
 from opencc import OpenCC
@@ -65,25 +65,6 @@ def _get_content(url, force_cache=False):
 	if 'photos.google.com/share' in url:
 		return _get_content_from_album(gphoto_2_album.get(url), no_text=True)
 	return cached_url.get(url, force_cache=force_cache)
-
-
-def _get_title(url, force_cache=True, simplify=False):
-	try:
-		content = _get_content(url, force_cache=force_cache)
-		soup = BeautifulSoup(_trim_webpage(content), 'html.parser')
-		doc = Document(content)
-		title = _find_title(soup, doc)
-		if simplify:
-			return cc.convert(title)
-		return title
-	except:
-		return 'No Title'
-
-
-def _get_author(url, force_cache=True):
-	content = _get_content(url, force_cache=force_cache)
-	soup = BeautifulSoup(_trim_webpage(content), 'html.parser')
-	return _find_author(soup)
 
 
 def get(url, simplify=False, force_cache=False):

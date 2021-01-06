@@ -7,9 +7,3 @@ def _find_raw_content(item):
 		if title:
 			return title
 	return item.text.strip()
-
-
-def _seems_valid_text(soup, limit=500):
-	if not soup:
-		return False
-	return soup.text and len(soup.text) > limit
