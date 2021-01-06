@@ -11,7 +11,7 @@ from telegram_util import matchKey
 from bs4 import BeautifulSoup
 from telegram_util import escapeMarkdown, clearUrl
 
-def _getPoster():
+def _get_poster():
 	global token
 	if token:
 		return TelegraphPoster(access_token = token)
@@ -20,20 +20,20 @@ def _getPoster():
 	token = r['access_token']
 	return p
 
-def _trimUrl(url):
+def _trim_url(url):
 	if not '://' in url:
 		return url
 	loc = url.find('://')
 	return url[loc + 3:]
 
-def _formaturl(url):
+def _format_url(url):
 	if '://' not in url:
-		return "https://" + url
+		return "http://" + url
 	return url
 
-def getArticle(url, throw_exception=False, toSimplified=False, force_cache=False):
+def get_article(url, throw_exception=False, simplify=False, force_cache=False):
 	try:
-		return _getArticle(_formaturl(url), toSimplified=toSimplified, force_cache=force_cache)
+		return _getArticle(_format_url(url), simplify=simplify, force_cache=force_cache)
 	except Exception as e:
 		if throw_exception:
 			raise e
@@ -60,7 +60,7 @@ def _getTelegraphPath(url):
 	return url[index + len(marker):]
 
 def get(url):
-	p = _getPoster()
+	p = _get_poster()
 	r = p._api_request('getPage', {
 		'path': _getTelegraphPath(url),
 		'fields': ['canEdit', 'can_edit'],
@@ -88,21 +88,21 @@ def _isEditable(p, url):
 def getAuthorUrl(article, url, noSourceLink):
 	if noSourceLink:
 		return ''
-	return _formaturl(article.url or url)
+	return _format_url(article.url or url)
 
 def getAuthorField(author, noSourceLink):
 	if author == 'Source' and noSourceLink:
 		return ''
 	return author
 
-def transfer(url, throw_exception=False, force=False, toSimplified=False, force_cache=False, noSourceLink=False):
+def transfer(url, throw_exception=False, force=False, simplify=False, force_cache=False, noSourceLink=False):
 	try:
 		if not force and not isConfidentUrl(url):
 			return
-		p = _getPoster()
+		p = _get_poster()
 		if not force and _isEditable(p, url):
 			return url
-		article = getArticle(url, throw_exception, toSimplified=toSimplified, force_cache = force_cache)
+		article = get_article(url, throw_exception, simplify=simplify, force_cache = force_cache)
 		if not article.text or not article.text.text.strip():
 			article.text = '<div>TO BE ADDED</div>'
 		try:
@@ -127,7 +127,7 @@ def transfer(url, throw_exception=False, force=False, toSimplified=False, force_
 			else:
 				raise e
 		if force or isConfident(url, article.text):
-			return _trimUrl(r['url'])
+			return _trim_url(r['url'])
 	except Exception as e:
 		if throw_exception:
 			raise e

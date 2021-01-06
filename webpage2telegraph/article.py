@@ -81,7 +81,7 @@ def getAuthor(url, force_cache=True):
 	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
 	return _findAuthor(soup)
 	
-def _getArticle(url, toSimplified=False, force_cache=False):
+def _getArticle(url, simplify=False, force_cache=False):
 	content = getContent(url, force_cache=force_cache)
 	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
 	article_url = _findUrl(url, soup)
@@ -89,10 +89,10 @@ def _getArticle(url, toSimplified=False, force_cache=False):
 	article = _Article(
 		_findTitle(soup, doc), 
 		_findAuthor(soup), 
-		readee.export(url, content=content, list_replace=True, 
-			toSimplified=toSimplified),
+		readee.export(url, content=content, list_replace=True,
+		              toSimplified=simplify),
 		article_url)
-	if toSimplified:
+	if simplify:
 		article.title = cc.convert(article.title)
 		article.author = cc.convert(article.author)
 	return article

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import webpage2telegraph
-from webpage2telegraph import transfer, _formaturl, exportAllInText, getTitle
+from webpage2telegraph import transfer, _format_url, exportAllInText, getTitle
 import os
 import sys
 from bs4 import BeautifulSoup
@@ -24,7 +24,7 @@ def testExport():
 		print('原文：', url)
 		r = webpage2telegraph.transfer(url, True, True, True)
 		print('导出：', r)
-		os.system('open ' + _formaturl(r) + ' -g')
+		os.system('open ' + _format_url(r) + ' -g')
 		print('')
 
 def test():
