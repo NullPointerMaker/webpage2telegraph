@@ -1,17 +1,17 @@
-# export_to_telegraph
+# Webpage to Telegraph
 
-Library for export webpage to Telegraph.
+Library for transfer webpage to Telegraph archive.
 
 ## usage
 
 ```
-import export_to_telegraph
-export_to_telegraph.TOKEN = YOUR_TELEGRAPH_TOKEN
-telegraph_url = export_to_telegraph.export(webpage_url)
+import webpage_to_telegraph
+webpage_to_telegraph.token = YOUR_TELEGRAPH_TOKEN
+telegraph_url = webpage_to_telegraph.transfer(webpage_url)
 ```
 
-If export failed, `telegraph_url` will be None.
+If transfer failed, `telegraph_url` will be None.
 
 ## how to install
 
-`pip3 install export_to_telegraph`
+`pip3 install webpage_to_telegraph`

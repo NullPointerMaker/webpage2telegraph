@@ -4,14 +4,13 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="export_to_telegraph",
-    version="0.0.100",
-    author="Yunzhi Gao",
-    author_email="gaoyunzhi@gmail.com",
-    description="Library for export webpage to Telegraph.",
+    name="webpage2telegraph",
+    version="0.0.1",
+    author="NullPointerMaker",
+    description="Library for transfer webpage to Telegraph archive.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/gaoyunzhi/export_to_telegraph",
+    url="https://github.com/NullPointerMaker/webpage_to_telegraph",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

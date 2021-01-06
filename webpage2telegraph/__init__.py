@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-name = 'export_to_telegraph'
+name = 'webpage2telegraph'
 token = ''
 
 from html_telegraph_poster import TelegraphPoster
@@ -16,7 +16,7 @@ def _getPoster():
 	if token:
 		return TelegraphPoster(access_token = token)
 	p = TelegraphPoster()
-	r = p.create_api_token('export_to_telegraph', 'export_to_telegraph')
+	r = p.create_api_token('webpage2telegraph', 'webpage2telegraph')
 	token = r['access_token']
 	return p
 
@@ -95,7 +95,7 @@ def getAuthorField(author, noSourceLink):
 		return ''
 	return author
 
-def export(url, throw_exception=False, force=False, toSimplified=False, force_cache=False, noSourceLink=False):
+def transfer(url, throw_exception=False, force=False, toSimplified=False, force_cache=False, noSourceLink=False):
 	try:
 		if not force and not isConfidentUrl(url):
 			return
@@ -133,7 +133,7 @@ def export(url, throw_exception=False, force=False, toSimplified=False, force_ca
 			raise e
 
 # TODO: may be remove this to another util? I don't want telegram util be 
-# depends on export to telegraph, that's why this util function is here...
+# depends on transfer to telegraph, that's why this util function is here...
 def exportAllInText(soup):
 	if not soup:
 		return ''
@@ -141,7 +141,7 @@ def exportAllInText(soup):
 	quote = BeautifulSoup(text, features='lxml').text.strip()
 	for link in soup.find_all('a', title=True, href=True):
 		url = link['title']
-		url = clearUrl(export(url) or url)
+		url = clearUrl(transfer(url) or url)
 		if '_' in url:
 			url = '[%s](%s)' % (url, url)
 		quote = quote.replace(link['href'], ' ' + url + ' ')
