@@ -6,7 +6,7 @@ token = ''
 
 from html_telegraph_poster import TelegraphPoster
 from .article import _getArticle, getTitle, getAuthor
-from .common import _seemsValidText
+from .common import _seems_valid_text
 from telegram_util import matchKey
 from bs4 import BeautifulSoup
 from telegram_util import escapeMarkdown, clearUrl
@@ -43,22 +43,6 @@ def get_article(url, throw_exception=False, simplify=False, force_cache=False):
 			raise e
 
 
-def is_confident_url(url):
-	return matchKey(url, ['mp.weixin.qq.com', 'stackoverflow', 'bbc', 'nyt', 'telegra'])
-
-
-def is_confident(url, soup):
-	if not is_confident_url(url):
-		return False
-	if not _seemsValidText(soup):
-		return False
-	for item in soup.find_all('figure'):
-		img = item.find('img')
-		if img and img.get('src', '').startswith('http'):
-			return True
-	return False
-
-
 def _get_telegraph_path(url):
 	marker = 'telegra.ph/'
 	index = url.find(marker)
@@ -88,11 +72,11 @@ def get_author_field(author, source):
 	return author
 
 
-def transfer(url, throw_exception=False, force=False, simplify=False, force_cache=False, source=False):
+def transfer(url, throw_exception=False, source=False, simplify=False, force_cache=False):
 	try:
 		p = _get_poster()
-		article = get_article(url, throw_exception, simplify=simplify, force_cache=force_cache)
-		if not article.text or not article.text.text.strip():
+		article = get_article(url, throw_exception=throw_exception, simplify=simplify, force_cache=force_cache)
+		if not article.text or not article.text.text.strip(): # content is empty
 			article.text = '<div>TO BE ADDED</div>'
 		try:
 			r = p.post(
@@ -115,8 +99,7 @@ def transfer(url, throw_exception=False, force=False, simplify=False, force_cach
 					text=str(article.text))
 			else:
 				raise e
-		if force or is_confident(url, article.text):
-			return _trim_url(r['url'])
+		return _trim_url(r['url'])
 	except Exception as e:
 		if throw_exception:
 			raise e

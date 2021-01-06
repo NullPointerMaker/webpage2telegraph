@@ -10,7 +10,7 @@ def _findRawContent(item):
 			return title
 	return item.text.strip()
 
-def _seemsValidText(soup, limit=500):
+def _seems_valid_text(soup, limit=500):
 	if not soup:
 		return False
 	return soup.text and len(soup.text) > limit
