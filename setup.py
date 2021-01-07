@@ -7,7 +7,7 @@ setuptools.setup(
 	name="webpage2telegraph",
 	version="0.0.3",
 	author="NullPointerMaker",
-	description="Library for transfer webpage to Telegraph archive.",
+	description="Transfer webpage to Telegraph archive.",
 	long_description=long_description,
 	long_description_content_type="text/markdown",
 	url="https://github.com/NullPointerMaker/webpage2telegraph",

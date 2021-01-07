@@ -1,7 +1,5 @@
 # Webpage to Telegraph
 
-Library for transfer webpage to Telegraph archive.
-
 ## Usage
 
 ```
