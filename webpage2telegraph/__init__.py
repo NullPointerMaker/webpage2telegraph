@@ -55,7 +55,7 @@ def transfer(url, throw_exception=False, source=False, simplify=False, force_cac
 	try:
 		p = _get_poster()
 		article = _get_article(url, throw_exception=throw_exception, simplify=simplify, force_cache=force_cache)
-		if not article.text or not article.text.strip():  # content is empty
+		if not article.text or not article.text.strip:  # content is empty
 			article.text = '<div>TO BE ADDED</div>'
 		try:
 			r = p.post(
