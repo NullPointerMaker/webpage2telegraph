@@ -75,7 +75,7 @@ def get(url, simplify=False, force_cache=False):
 	article = _Article(
 		_find_title(soup, doc),
 		_find_author(soup),
-		readee.export(url, content=content, list_replace=True, toSimplified=simplify),
+		readee.export(url, content=content, toSimplified=simplify, list_replace=True),
 		article_url)
 	if simplify:
 		article.title = cc.convert(article.title)
