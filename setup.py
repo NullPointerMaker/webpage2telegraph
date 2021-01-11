@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
 	name="webpage2telegraph",
-	version="0.0.4",
+	version="0.0.5",
 	author="NullPointerMaker",
 	description="Transfer webpage to Telegraph archive.",
 	long_description=long_description,
