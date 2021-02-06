@@ -27,6 +27,8 @@ def _trimUrl(url):
 	return url[loc + 3:]
 
 def _formaturl(url):
+	if not url.strip():
+		return ''
 	if '://' not in url:
 		return "https://" + url
 	return url
