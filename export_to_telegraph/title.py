@@ -27,13 +27,13 @@ def _yieldPossibleTitleItem(soup):
 	yield soup.find("h1", class_='news_title')
 	yield soup.find("h1", class_='entry-title')
 	yield soup.find('table', class_='infobox')
-	yield soup.find('meta', property='og:title')
 	yield soup.find("h1", class_='title')
 	yield soup.find("h1", class_='story_art_title')
 	yield soup.find("h1", class_='post-head')
 	yield soup.find("h2", class_='question-title')
 	yield soup.find("title")
 	yield soup.find("h1")
+	yield soup.find('meta', property='og:title')
 	yield soup.find("h2")
 
 	for item in soup.find_all('meta'):
