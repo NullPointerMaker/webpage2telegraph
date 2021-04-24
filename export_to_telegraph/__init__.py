@@ -33,9 +33,9 @@ def _formaturl(url):
 		return "https://" + url
 	return url
 
-def getArticle(url, throw_exception=False, toSimplified=False, force_cache=False):
+def getArticle(url, throw_exception=False, toSimplified=False, force_cache=False, noAutoConvert=False):
 	try:
-		return _getArticle(_formaturl(url), toSimplified=toSimplified, force_cache=force_cache)
+		return _getArticle(_formaturl(url), toSimplified=toSimplified, force_cache=force_cache, noAutoConvert=noAutoConvert)
 	except Exception as e:
 		if throw_exception:
 			raise e
@@ -97,7 +97,7 @@ def getAuthorField(author, noSourceLink):
 		return ''
 	return author
 
-def export(url, throw_exception=False, force=False, toSimplified=False, force_cache=False, noSourceLink=False):
+def export(url, throw_exception=False, force=False, toSimplified=False, force_cache=False, noSourceLink=False, noAutoConvert=False):
 	try:
 		url = clearUrl(url)
 		if not force and not isConfidentUrl(url):
@@ -105,7 +105,7 @@ def export(url, throw_exception=False, force=False, toSimplified=False, force_ca
 		p = _getPoster()
 		if not force and _isEditable(p, url):
 			return url
-		article = getArticle(url, throw_exception, toSimplified=toSimplified, force_cache = force_cache)
+		article = getArticle(url, throw_exception, toSimplified=toSimplified, force_cache = force_cache, noAutoConvert=noAutoConvert)
 		if not article.text or not article.text.text.strip():
 			article.text = '<div>TO BE ADDED</div>'
 		try:

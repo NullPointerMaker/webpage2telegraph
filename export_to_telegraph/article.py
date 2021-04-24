@@ -13,9 +13,10 @@ from opencc import OpenCC
 import cached_url
 import time
 import yaml
-from telegram_util import matchKey, getWid
+from telegram_util import matchKey, getWid, isCN
 import weibo_2_album
 import gphoto_2_album
+import hanzidentifier
 
 cc = OpenCC('tw2sp')
 
@@ -80,19 +81,31 @@ def getAuthor(url, force_cache=True):
 	content = getContent(url, force_cache=force_cache)
 	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
 	return _findAuthor(soup)
+
+def calculateToSimplified(toSimplified, noAutoConvert, title):
+	if toSimplified:
+		return True
+	if noAutoConvert:
+		return False
+	for c in title:
+		if isCN(c) and not hanzidentifier.is_simplified(c):
+			return True
+	return False
 	
-def _getArticle(url, toSimplified=False, force_cache=False):
+def _getArticle(url, toSimplified=False, force_cache=False, noAutoConvert=False):
 	content = getContent(url, force_cache=force_cache)
 	soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
 	article_url = _findUrl(url, soup)
 	doc = Document(content)
+	title = _findTitle(soup, doc)
+	to_simplify_calculated = calculateToSimplified(toSimplified, noAutoConvert, title)
 	article = _Article(
-		_findTitle(soup, doc), 
+		title, 
 		_findAuthor(soup), 
 		readee.export(url, content=content, list_replace=True, 
-			toSimplified=toSimplified),
+			toSimplified=to_simplify_calculated),
 		article_url)
-	if toSimplified:
+	if to_simplify_calculated:
 		article.title = cc.convert(article.title)
 		article.author = cc.convert(article.author)
 	return article
