@@ -9,8 +9,13 @@ def _similarSingle(p, mediaName):
 def _similar(p, mediaNames):
 	return any([_similarSingle(p, m) for m in mediaNames])
 
+to_remove_ends = ['| 自由微信 | FreeWeChat']
+
 def _cleanupRawTitle(raw):
 	raw = ''.join(raw.split('BBC Learning English - '))
+	for end in to_remove_ends:
+		if raw.endswith(end):
+			raw = raw[:-len(end)]
 	mediaNames = ['nyt', 'new york times', 'stackoverflow', 'bbc', 'opinion']
 	index = raw.rfind('- ')
 	if index != -1:

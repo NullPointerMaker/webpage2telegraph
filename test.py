@@ -8,7 +8,7 @@ import sys
 from bs4 import BeautifulSoup
 
 urls = [
-	'https://www.biede.com/bie-girls/pedophilia-social-media/'
+	'https://freewechat.com/a/MzkyOTE2NzE2MA==/2247483780/1'
 ]
 
 s = '''
