@@ -16,7 +16,9 @@ chat = tele.bot.get_chat(420074357)
 
 urls = [
 	'https://freewechat.com/a/MzU0NTEyMjI1Mg==/2247494547/1',
-	'https://freewechat.com/a/MzkyOTE2NzE2MA==/2247483780/1'
+	'https://freewechat.com/a/MzkyOTE2NzE2MA==/2247483780/1',
+	'https://freewechat.com/a/MzIyMTc1Nzc2OA==/2247489247/3',
+	'https://freewechat.com/a/MzIyMTc1Nzc2OA==/2247488945/3',
 ]
 
 s = '''
@@ -40,7 +42,7 @@ def test():
 	# testExportAllInText()
 
 def testAlbum():
-	album = export_to_telegraph.getAlbum(urls[0])
+	album = export_to_telegraph.getAlbum(urls[3])
 	album_sender.send_v2(chat, album)
 
 if __name__=='__main__':

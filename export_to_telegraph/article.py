@@ -130,8 +130,19 @@ def getAlbum(url, force_cache=True):
 	for tag in ['img', 'br']:
 		for item in content.findAll(tag):
 			item.replace_with('\n\n')
+	for item in content.findAll('p'):
+		if not item.text.strip():
+			item.replace_with('\n\n')
 	for item in content.findAll('span'):
 		if item.text.startswith('图/'):
+			item.decompose()
+	for item in content.findAll('p'):
+		if len(item.text) < 20 and '转' in item.text and '公号' in item.text:
+			item.decompose()
+			continue
+		if len(item.text) < 20 and '作者：' in item.text:
+			item.decompose()
+		if len(item.text) < 20 and '公号' in item.text and 'id' in item.text.lower():
 			item.decompose()
 	title = '【%s】\n\n' % getTitle(url)
 	album.cap_html_v2 = title + cutCaptionHtml(content.text, 150).strip() + '\n\n' + url
