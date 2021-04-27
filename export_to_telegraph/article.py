@@ -124,7 +124,7 @@ def getAlbum(url, force_cache=True):
 		except:
 			continue
 		w, h = img.size
-		if w * 0.25 < h < w * 4 and min(w, h) > 50:
+		if w * 0.25 < h < w * 4 and min(w, h) > 50 and max(w, h) > 140:
 			album.imgs.append(item.get('src'))
 			break
 	for tag in ['img', 'br']:
@@ -134,16 +134,22 @@ def getAlbum(url, force_cache=True):
 		if not item.text.strip():
 			item.replace_with('\n\n')
 	for item in content.findAll('span'):
-		if item.text.startswith('图/'):
+		if item.text.startswith('图/') or item.text.startswith('图：'):
 			item.decompose()
+			continue
 	for item in content.findAll('p'):
 		if len(item.text) < 20 and '转' in item.text and '公号' in item.text:
 			item.decompose()
 			continue
 		if len(item.text) < 20 and '作者：' in item.text:
 			item.decompose()
+			continue
 		if len(item.text) < 20 and '公号' in item.text and 'id' in item.text.lower():
 			item.decompose()
+			continue
 	title = '【%s】\n\n' % getTitle(url)
-	album.cap_html_v2 = title + cutCaptionHtml(content.text, 150).strip() + '\n\n' + url
+	lines = cutCaptionHtml(content.text, 200).strip().strip('\ufeff').strip()
+	lines = lines.split('\n')
+	lines = lines[:6]
+	album.cap_html_v2 = title + '\n'.join(lines).strip() + '\n\n' + url
 	return album
