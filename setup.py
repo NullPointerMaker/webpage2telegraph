@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="export_to_telegraph",
-    version="0.0.104",
+    version="0.0.105",
     author="Yunzhi Gao",
     author_email="gaoyunzhi@gmail.com",
     description="Library for export webpage to Telegraph.",
@@ -29,6 +29,7 @@ setuptools.setup(
         'weibo_2_album',
         'gphoto_2_album',
         'hanzidentifier',
+        'pillow',
     ],
     python_requires='>=3.0',
 )

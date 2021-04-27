@@ -5,7 +5,7 @@ name = 'export_to_telegraph'
 token = ''
 
 from html_telegraph_poster import TelegraphPoster
-from .article import _getArticle, getTitle, getAuthor
+from .article import _getArticle, getTitle, getAuthor, getAlbum
 from .common import _seemsValidText
 from telegram_util import matchKey
 from bs4 import BeautifulSoup

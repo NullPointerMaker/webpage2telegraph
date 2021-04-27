@@ -13,10 +13,11 @@ from opencc import OpenCC
 import cached_url
 import time
 import yaml
-from telegram_util import matchKey, getWid, isCN
+from telegram_util import matchKey, getWid, isCN, AlbumResult, cutCaptionHtml
 import weibo_2_album
 import gphoto_2_album
 import hanzidentifier
+from PIL import Image
 
 cc = OpenCC('tw2sp')
 
@@ -109,3 +110,29 @@ def _getArticle(url, toSimplified=False, force_cache=False, noAutoConvert=False)
 		article.title = cc.convert(article.title)
 		article.author = cc.convert(article.author)
 	return article
+
+def getAlbum(url, force_cache=True):
+	content = _getArticle(url, force_cache=force_cache).text
+	album = AlbumResult()
+	for item in content.findAll('img'):
+		path = item.get('src')
+		if not path:
+			continue
+		cached_url.get(path, mode='b', force_cache=True)
+		try:
+			img = Image.open(cached_url.getFilePath(path)) 
+		except:
+			continue
+		w, h = img.size
+		if w * 0.25 < h < w * 4 and min(w, h) > 50:
+			album.imgs.append(item.get('src'))
+			break
+	for tag in ['img', 'br']:
+		for item in content.findAll(tag):
+			item.replace_with('\n\n')
+	for item in content.findAll('span'):
+		if item.text.startswith('图/'):
+			item.decompose()
+	title = '【%s】\n\n' % getTitle(url)
+	album.cap_html_v2 = title + cutCaptionHtml(content.text, 150).strip() + '\n\n' + url
+	return album

@@ -6,8 +6,16 @@ from export_to_telegraph import export, _formaturl, exportAllInText, getTitle
 import os
 import sys
 from bs4 import BeautifulSoup
+from telegram.ext import Updater
+import album_sender
+
+with open('bot_token') as f:
+	bot_token = f.read().strip()
+tele = Updater(bot_token, use_context=True)
+chat = tele.bot.get_chat(420074357)
 
 urls = [
+	'https://freewechat.com/a/MzU0NTEyMjI1Mg==/2247494547/1',
 	'https://freewechat.com/a/MzkyOTE2NzE2MA==/2247483780/1'
 ]
 
@@ -31,5 +39,9 @@ def test():
 	testExport()
 	# testExportAllInText()
 
+def testAlbum():
+	album = export_to_telegraph.getAlbum(urls[0])
+	album_sender.send_v2(chat, album)
+
 if __name__=='__main__':
-	test()
+	testAlbum()
