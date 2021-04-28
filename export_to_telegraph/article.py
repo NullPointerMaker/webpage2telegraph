@@ -138,14 +138,7 @@ def getAlbum(url, force_cache=True):
 			item.decompose()
 			continue
 	for item in content.findAll('p'):
-		if len(item.text) < 20 and '转' in item.text and '公号' in item.text:
-			item.decompose()
-			continue
-		if len(item.text) < 20 and '作者：' in item.text:
-			item.decompose()
-			continue
-		if len(item.text) < 20 and '公号' in item.text and 'id' in item.text.lower():
-			item.decompose()
+		if len(item.text) < 20:
 			continue
 	title = '【%s】\n\n' % getTitle(url)
 	lines = cutCaptionHtml(content.text, 200).strip().strip('\ufeff').strip()
