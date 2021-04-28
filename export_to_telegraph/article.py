@@ -118,8 +118,8 @@ def getAlbum(url, force_cache=True):
 		path = item.get('src')
 		if not path:
 			continue
-		cached_url.get(path, mode='b', force_cache=True)
 		try:
+			cached_url.get(path, mode='b', force_cache=True)
 			img = Image.open(cached_url.getFilePath(path)) 
 		except:
 			continue
