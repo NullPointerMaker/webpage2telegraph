@@ -131,8 +131,7 @@ def getAlbum(url, force_cache=True):
 		for item in content.findAll(tag):
 			item.replace_with('\n\n')
 	for item in content.findAll('p'):
-		if not item.text.strip():
-			item.replace_with('\n\n')
+		item.append('\n\n')
 	for item in content.findAll('span'):
 		if item.text.startswith('图/') or item.text.startswith('图：'):
 			item.decompose()
