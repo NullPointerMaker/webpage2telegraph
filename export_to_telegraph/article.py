@@ -139,6 +139,7 @@ def getAlbum(url, force_cache=True):
 			continue
 	for item in content.findAll('p'):
 		if len(item.text) < 20:
+			item.decompose()
 			continue
 	title = '【%s】\n\n' % getTitle(url)
 	lines = cutCaptionHtml(content.text, 200).strip().strip('\ufeff').strip()
