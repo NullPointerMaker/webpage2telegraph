@@ -66,13 +66,14 @@ def getContent(url, force_cache=False):
 		return getContentFromAlbum(gphoto_2_album.get(url), noText=True)
 	return cached_url.get(url, force_cache=force_cache)
 
-def getTitle(url, force_cache=True, toSimplified = False):
+def getTitle(url, force_cache=True, toSimplified = False, noAutoConvert=False):
 	try:
 		content = getContent(url, force_cache=force_cache)
 		soup = BeautifulSoup(_trimWebpage(content), 'html.parser')
 		doc = Document(content)
 		title =  _findTitle(soup, doc)
-		if toSimplified:
+		to_simplify_calculated = calculateToSimplified(toSimplified, noAutoConvert, title)
+		if to_simplify_calculated:
 			return cc.convert(title)
 		return title
 	except:
