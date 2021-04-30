@@ -111,7 +111,7 @@ def _getArticle(url, toSimplified=False, force_cache=False, noAutoConvert=False)
 		article.author = cc.convert(article.author)
 	return article
 
-def getAlbum(url, force_cache=True):
+def getAlbum(url, force_cache=True, word_limit=200, paragraph_limit=3):
 	content = _getArticle(url, force_cache=force_cache).text
 	album = AlbumResult()
 	for item in content.findAll('img'):
@@ -141,8 +141,8 @@ def getAlbum(url, force_cache=True):
 			item.decompose()
 			continue
 	title = '【%s】\n\n' % getTitle(url)
-	lines = cutCaptionHtml(content.text, 200).strip().strip('\ufeff').strip()
+	lines = cutCaptionHtml(content.text, word_limit).strip().strip('\ufeff').strip()
 	lines = lines.split('\n')
-	lines = lines[:6]
+	lines = lines[:paragraph_limit * 2]
 	album.cap_html_v2 = title + '\n'.join(lines).strip() + '\n\n' + url
 	return album
