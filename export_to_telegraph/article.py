@@ -125,7 +125,7 @@ def getAlbum(url, force_cache=True, word_limit=200, paragraph_limit=3, append_so
 		except:
 			continue
 		w, h = img.size
-		if w * 0.25 < h < w * 4 and min(w, h) > 50 and max(w, h) > 140:
+		if w * 0.25 < h < w * 4 and min(w, h) > 100 and max(w, h) > 300:
 			album.imgs.append(item.get('src'))
 			break
 	for tag in ['img', 'br']:
