@@ -141,7 +141,7 @@ def getAlbum(url, force_cache=True, word_limit=200, paragraph_limit=3, append_so
 	for item in content.findAll('p'):
 		item.append('\n\n')
 	title = '【%s】\n\n' % getTitle(url)
-	lines = content.text.split()
+	lines = content.text.split('\n')
 	lines = [line.strip() for line in lines]
 	lines = [line for line in lines if isGoodLine(line)]
 	if paragraph_limit < 5:
