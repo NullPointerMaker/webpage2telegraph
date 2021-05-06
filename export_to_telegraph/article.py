@@ -145,7 +145,7 @@ def getAlbum(url, force_cache=True, word_limit=200, paragraph_limit=3, append_so
 	lines = [line.strip() for line in lines]
 	lines = [line for line in lines if isGoodLine(line)]
 	if paragraph_limit < 5:
-		lines = [line for line in lines if line and len(line) > 20]
+		lines = [line for line in lines if not line or len(line) > 20]
 	lines = cutCaptionHtml('\n'.join(lines), word_limit).strip().strip('\ufeff').strip()
 	lines = lines.split('\n')
 	lines = lines[:paragraph_limit * 2]
