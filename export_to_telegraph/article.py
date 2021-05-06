@@ -112,6 +112,13 @@ def _getArticle(url, toSimplified=False, force_cache=False, noAutoConvert=False)
 		article.author = cc.convert(article.author)
 	return article
 
+def isGoodLine(line):
+	start_tags = ['作者 | ', '靠谱的新媒体不多', '图/', '图：']
+	for start_tag in start_tags:
+		if line.startswith(start_tag):
+			return False
+	return True
+
 def getAlbum(url, force_cache=True, word_limit=200, paragraph_limit=3, append_source=False, append_url = True):
 	content = _getArticle(url, force_cache=force_cache).text
 	album = AlbumResult()
@@ -133,16 +140,13 @@ def getAlbum(url, force_cache=True, word_limit=200, paragraph_limit=3, append_so
 			item.replace_with('\n\n')
 	for item in content.findAll('p'):
 		item.append('\n\n')
-	for item in content.findAll('span'):
-		if item.text.startswith('图/') or item.text.startswith('图：'):
-			item.decompose()
-			continue
-	for item in content.findAll('p'):
-		if len(item.text) < 20:
-			item.decompose()
-			continue
 	title = '【%s】\n\n' % getTitle(url)
-	lines = cutCaptionHtml(content.text, word_limit).strip().strip('\ufeff').strip()
+	lines = content.text.split()
+	lines = [line.strip() for line in lines]
+	lines = [line for line in lines if isGoodLine(line)]
+	if paragraph_limit < 5:
+		lines = [line for line in lines if line and len(line) > 20]
+	lines = cutCaptionHtml('\n'.join(lines), word_limit).strip().strip('\ufeff').strip()
 	lines = lines.split('\n')
 	lines = lines[:paragraph_limit * 2]
 	album.cap_html_v2 = title + '\n'.join(lines).strip()

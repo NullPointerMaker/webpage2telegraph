@@ -40,6 +40,7 @@ def test():
 
 def testAlbum():
 	album = export_to_telegraph.getAlbum(urls[0])
+	print(album)
 	# album_sender.send_v2(chat, album)
 
 if __name__=='__main__':
