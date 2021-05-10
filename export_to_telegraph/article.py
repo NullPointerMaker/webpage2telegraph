@@ -113,7 +113,8 @@ def _getArticle(url, toSimplified=False, force_cache=False, noAutoConvert=False)
 	return article
 
 def isGoodLine(line):
-	start_tags = ['作者 | ', '靠谱的新媒体不多', '图/', '图：']
+	start_tags = ['作者 | ', '靠谱的新媒体不多', '图/', '图：', 
+		'最近很多读者反映收不到', '【今日']
 	for start_tag in start_tags:
 		if line.startswith(start_tag):
 			return False
