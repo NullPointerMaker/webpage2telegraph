@@ -15,7 +15,7 @@ tele = Updater(bot_token, use_context=True)
 chat = tele.bot.get_chat(420074357)
 
 urls = [
-	'https://mp.weixin.qq.com/s/dY4J32LdTcg9QwPHDtiv-w',
+	'https://mp.weixin.qq.com/s/Yc_X8jclGVTOMW2eK1ibDQ',
 ]
 
 s = '''
@@ -41,7 +41,7 @@ def test():
 def testAlbum():
 	album = export_to_telegraph.getAlbum(urls[0])
 	print(album)
-	# album_sender.send_v2(chat, album)
+	album_sender.send_v2(chat, album)
 
 if __name__=='__main__':
 	testAlbum()

@@ -18,6 +18,7 @@ import weibo_2_album
 import gphoto_2_album
 import hanzidentifier
 from PIL import Image
+import os
 
 cc = OpenCC('tw2sp')
 
@@ -133,6 +134,9 @@ def getAlbum(url, force_cache=True, word_limit=200, paragraph_limit=3, append_so
 		except:
 			continue
 		w, h = img.size
+		file_size = os.stat(cached_url.getFilePath(path)).st_size
+		if file_size == 36126 and w == 1080 and h == 1080: # 界面文化题头
+			continue
 		if w == 750 and h == 234: # 界面文化题头
 			continue
 		if w * 0.25 < h < w * 4 and min(w, h) > 100 and max(w, h) > 300:
