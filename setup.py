@@ -27,6 +27,8 @@ setuptools.setup(
         'cached_url',
         'weibo_2_album',
         'gphoto_2_album',
+        'hanzidentifier',
+        'pillow',
     ],
     python_requires='>=3.0',
 )
