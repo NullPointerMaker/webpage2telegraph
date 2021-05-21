@@ -12,8 +12,14 @@ def _similar(p, media_names):
     return any([_similar_single(p, m) for m in media_names])
 
 
+to_remove_ends = ['| 自由微信 | FreeWeChat']
+
+
 def _cleanup_raw_title(raw):
     raw = ''.join(raw.split('BBC Learning English - '))
+    for end in to_remove_ends:
+        if raw.endswith(end):
+            raw = raw[:-len(end)]
     media_names = ['nyt', 'new york times', 'stackoverflow', 'bbc', 'opinion']
     index = raw.rfind('- ')
     if index != -1:

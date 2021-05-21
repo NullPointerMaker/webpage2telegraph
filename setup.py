@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="webpage2telegraph",
-    version="0.0.5",
+    version="0.0.6",
     author="NullPointerMaker",
     description="Transfer webpage to Telegraph archive.",
     long_description=long_description,
@@ -28,7 +28,6 @@ setuptools.setup(
         'weibo_2_album',
         'gphoto_2_album',
         'hanzidentifier',
-        'pillow',
     ],
     python_requires='>=3.0',
 )

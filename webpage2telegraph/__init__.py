@@ -32,9 +32,10 @@ def _format_url(url):
     return url
 
 
-def _get_article(url, throw_exception=False, simplify=False, force_cache=False):
+def _get_article(url, throw_exception=False, simplify=False, force_cache=False, no_auto_convert=False):
     try:
-        return article.get(_format_url(url), simplify=simplify, force_cache=force_cache)
+        return article.get(_format_url(url), simplify=simplify, force_cache=force_cache,
+                           no_auto_convert=no_auto_convert)
     except Exception as e:
         if throw_exception:
             raise e
@@ -52,10 +53,11 @@ def get_author_field(author, source):
     return author
 
 
-def transfer(url, throw_exception=False, source=False, simplify=False, force_cache=False):
+def transfer(url, throw_exception=False, source=False, simplify=False, force_cache=False, no_auto_convert=False):
     try:
         p = _get_poster()
-        article = _get_article(url, throw_exception=throw_exception, simplify=simplify, force_cache=force_cache)
+        article = _get_article(url, throw_exception=throw_exception, simplify=simplify, force_cache=force_cache,
+                               no_auto_convert=no_auto_convert)
         if not article.text or not article.text.text.strip():  # content is empty
             article.text = '<div>需要手动编辑</div>'
         try:
