@@ -10,8 +10,8 @@ webpage2telegraph.token = YOUR_TELEGRAPH_TOKEN
 telegraph_url = webpage2telegraph.transfer(webpage_url)
 ```
 
-If transfer failed, `telegraph_url` will be None.
+If transfer failed, `telegraph_url` will be `None`.
 
-## How to Install
+## Install
 
-`pip3 install webpage_to_telegraph`
+`pip3 install webpage2telegraph`
