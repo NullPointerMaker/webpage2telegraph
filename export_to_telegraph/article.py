@@ -137,6 +137,8 @@ def getAlbum(url, force_cache=True, word_limit=200, paragraph_limit=3, append_so
 		file_size = os.stat(cached_url.getFilePath(path)).st_size
 		if file_size == 36126 and w == 1080 and h == 1080: # 界面文化题头
 			continue
+		if file_size == 27134 and w == 640 and h == 640: # 思想市场
+			continue
 		if w == 750 and h == 234: # 界面文化题头
 			continue
 		if w * 0.25 < h < w * 4 and min(w, h) > 100 and max(w, h) > 300:

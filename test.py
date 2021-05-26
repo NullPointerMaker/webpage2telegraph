@@ -15,7 +15,7 @@ tele = Updater(bot_token, use_context=True)
 chat = tele.bot.get_chat(420074357)
 
 urls = [
-	'https://mp.weixin.qq.com/s/Yc_X8jclGVTOMW2eK1ibDQ',
+	'https://freewechat.com/a/MzU4NzQ4OTYzMA==/2247485243/2'
 ]
 
 s = '''
