@@ -143,6 +143,8 @@ def getAlbum(url, force_cache=True, word_limit=200, paragraph_limit=3, append_so
 			continue
 		if 6000 < file_size < 9000 and w == 347 and h == 347: # 界面文化题头
 			continue
+		if 87000 < file_size < 91000 and w == 900 and h == 500: # 美国华人杂谈题头
+			continue
 		if w * 0.25 < h < w * 4 and min(w, h) > 100 and max(w, h) > 300:
 			# print(file_size, w, h)
 			album.imgs.append(item.get('src'))
