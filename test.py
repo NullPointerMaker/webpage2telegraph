@@ -15,7 +15,7 @@ tele = Updater(bot_token, use_context=True)
 chat = tele.bot.get_chat(420074357)
 
 urls = [
-	'https://mp.weixin.qq.com/s/QiMIp8Y0GKaxxiBpetxZgA'
+	'https://dq.yam.com/post.php?id=13951'
 ]
 
 s = '''
@@ -44,4 +44,4 @@ def testAlbum():
 	album_sender.send_v2(chat, album)
 
 if __name__=='__main__':
-	testAlbum()
+	testExport()

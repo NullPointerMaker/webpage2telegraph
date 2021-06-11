@@ -9,7 +9,7 @@ def _similarSingle(p, mediaName):
 def _similar(p, mediaNames):
 	return any([_similarSingle(p, m) for m in mediaNames])
 
-to_remove_ends = ['| 自由微信 | FreeWeChat']
+to_remove_ends = ['| 自由微信 | FreeWeChat', ' | 地球圖輯隊 帶你看透全世界']
 
 def _cleanupRawTitle(raw):
 	raw = ''.join(raw.split('BBC Learning English - '))
