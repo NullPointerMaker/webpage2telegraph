@@ -6,9 +6,9 @@ Move to [Webpage to Telegraph Adapter](https://github.com/NullPointerMaker/webpa
 The new version is an adapter library to [Export to Telegraph](https://github.com/gaoyunzhi/export_to_telegraph), hacking with monkey patches.
 
 Maintaining a separate library is too cumbersome, especially when the upstream does not cooperate.  
-All commits are uncommented. The issues are ignored.
+All commits are uncommented. I must check them one by one. And the issues are ignored.
 
-I just want to make some unacceptable fixes.
+I just want to make some fixes which are not accepted.
 
 ## Usage
 
